@@ -1,0 +1,6 @@
+.git
+.idea
+.m2
+app/target
+forecast-data
+ml-service

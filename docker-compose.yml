@@ -1,0 +1,58 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: forecast_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-forecast-local-password}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d forecast_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  ml:
+    build:
+      context: ./ml-service
+    environment:
+      NONTON_API_KEY: ${NONTON_API_KEY:-local-development-key-change-me}
+      NONTON_MAX_UPLOAD_BYTES: ${NONTON_MAX_UPLOAD_BYTES:-2147483648}
+    ports:
+      - "127.0.0.1:8080:8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=4g,mode=1777
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/readyz', timeout=8)"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/forecast_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-forecast-local-password}
+      NONTON_BASE_URL: http://ml:8080
+      NONTON_API_KEY: ${NONTON_API_KEY:-local-development-key-change-me}
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - forecast-data:/opt/forestock/forecast-data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ml:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  forecast-data:

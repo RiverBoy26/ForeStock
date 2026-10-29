@@ -73,10 +73,10 @@ public class CsvValidationService {
 
         long days = last.toEpochDay() - first.toEpochDay() + 1;
 
-        if (days < 180) {
+        if (days < 364) {
             throw new ResponseStatusException(
                     HttpStatus.UNPROCESSABLE_ENTITY,
-                    "История продаж должна охватывать минимум 180 дней"
+                    "История продаж должна охватывать минимум 52 недели"
             );
         }
 

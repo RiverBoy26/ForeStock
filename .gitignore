@@ -1,0 +1,7 @@
+.env
+.idea/
+.m2/
+app/target/
+forecast-data/
+__pycache__/
+*.pyc

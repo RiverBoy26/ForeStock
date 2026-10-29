@@ -1,0 +1,97 @@
+{
+  "release": "7.4.0",
+  "name": "Nonton 7.4 FULL history + META",
+  "created_on": "2026-10-29",
+  "training_cutoff": "2026-07-26",
+  "forecast_week_starts": [
+    "2026-07-27",
+    "2026-08-03",
+    "2026-08-10",
+    "2026-08-17",
+    "2026-08-24",
+    "2026-08-31",
+    "2026-09-07",
+    "2026-09-14",
+    "2026-09-21"
+  ],
+  "model_count": 41,
+  "base_model_count": 39,
+  "meta_model_count": 2,
+  "snapshot": "snapshots/weekly_history_2026-07-26.npz",
+  "training_modes": {
+    "max_origins": 0,
+    "rounds": 240,
+    "max_groups": 24
+  },
+  "source_data_not_included": "hakaton.zip",
+  "supported_inference": "Frozen 9-week contest horizon only",
+  "variants": {
+    "selected": {
+      "probability_threshold": 0.55,
+      "conditional_blend": 0.15,
+      "min_active_weeks_last13": 7
+    },
+    "conservative": {
+      "probability_threshold": 0.575,
+      "conditional_blend": 0.0,
+      "min_active_weeks_last13": 0
+    },
+    "baseline": null,
+    "smape_experimental": {
+      "probability_threshold": 0.55,
+      "conditional_blend": 0.3,
+      "min_active_weeks_last13": 7
+    }
+  },
+  "artifact_sha256": {
+    "models/base/global_poisson.txt": "e370dc9fa4dfe2944fac84e7e9200f64a8413628fb269c5ffc98eda76f69fa99",
+    "models/base/global_tweedie.txt": "0829a24ed4d3e58068ee6dec91dfa77394932a7cec6fb780ee2ac5edb6ee111d",
+    "models/base/recursive_poisson.txt": "b4579343149d356a2a9844436e68d43c8025e3e45c8a9c82eecf9234c38fe9ae",
+    "models/base/recursive_tweedie.txt": "8871234eaf3f3e4e28ff79e57fab0e667406d37a025a970dd594560b31ffe08d",
+    "models/base/warehouse__0.txt": "358be4fe56951a877057b55cf50027ece3a6ee7671c5716d4fd24b7aeadd9ae1",
+    "models/base/warehouse__1.txt": "958a6914b1d9c7711be18f44dbe882dcf8d3f123aafb2ebe81c969889b2add86",
+    "models/base/warehouse__10.txt": "56d7ad44ce7e3449a07c5f94231b83c60cec7563cce63aad4f86dc002d2f950c",
+    "models/base/warehouse__2.txt": "142d406cadbdbc55704b2d45f3ec7f2d8e403a01ad7432d896731ab346c00377",
+    "models/base/warehouse__3.txt": "c55ff97302feee28bbdc2b45f5c2efe6f31cbdf9e560735748aafc8a759b56b3",
+    "models/base/warehouse__4.txt": "602c1cb161e40b50b52729b78f84d20cf5967fe356c256140574b83607a911b2",
+    "models/base/warehouse__5.txt": "92c19f6431b1c0ea8f1e4ee11c11c14ebf0ec0473e67686ee6eb0d2872c394d4",
+    "models/base/warehouse__6.txt": "21739d61396b3776ec4413e33ba4d5997ee1630004b48f087a49aba0b4bac0ec",
+    "models/base/warehouse__7.txt": "4581259df68508702b94ba7ccc2759496f76fb03e170c817f0923ba778adc292",
+    "models/base/warehouse__8.txt": "ad1eb2d16f0a5ea7b9f68eedb0ff037a4440de72b49ec8846e2478c9f8a84dc2",
+    "models/base/warehouse__9.txt": "6f1c490027121a1a96e94c0656c6e290628ca4dd7c904d1e0e8abe333e46f5e4",
+    "models/base/whcat1__0_8.txt": "197fb0bd9c82197d8024fde5b29603eb6286aa568b238b87baf98e7332d98c1d",
+    "models/base/whcat1__0_9.txt": "8694a7d37012d1195de4a0f66ffce1484f1e5cc792bec04d7d5a54089c4697ac",
+    "models/base/whcat1__10_8.txt": "5e7de8cbfd5abc3e98568a06b1a25ffedc9c3a8f66427e2d9afbd0141df68e23",
+    "models/base/whcat1__10_9.txt": "7ef1dc43c23f674d08b7c6187ceabc34f627ed3c4f80ab4993b96c4a7f9d962a",
+    "models/base/whcat1__1_8.txt": "51de62c2acd65a17634d9b19735c3bad655908e8f5f648feac643bd77a0fdcaa",
+    "models/base/whcat1__1_9.txt": "78d448f7ccbc8916fe3457839e5394dfec4fa9edde6c017ceecae0fa0d0fad0d",
+    "models/base/whcat1__2_8.txt": "0e61b2b19a64171332952bc8245d18136c78bbd2f1691b68040ada2bff6a3809",
+    "models/base/whcat1__2_9.txt": "c4f8ff490ae7d093eacd1606abd89f489bfe68eb83f3d8aa44b8e83ba749c6b2",
+    "models/base/whcat1__3_2.txt": "243378a86c8f54ab69fc946097d9200b21e2c919a6bf5e992ab278620581d130",
+    "models/base/whcat1__3_8.txt": "6bf584aa5e8979cd4a8ac8a6cbadc378f40258370a5350229cfd72cf9284f421",
+    "models/base/whcat1__3_9.txt": "c7d1c9bc0d274b1960f230bad0d8ab3893039080d602378416c06c69d8995534",
+    "models/base/whcat1__4_2.txt": "43286d7059060fd06e21b92cef9d1150d5b7855770eb7c22308b6e0e02747379",
+    "models/base/whcat1__4_8.txt": "14e6fe409f0f666c193c282ea6df9ea906916b2a77c7b46ff8459e219fea49ab",
+    "models/base/whcat1__4_9.txt": "efbb6f2b6b0490bac2086018c967701720e070b203a69b5f302332513f39a6d5",
+    "models/base/whcat1__5_8.txt": "0e672aded05ce3cba004325b5d59e425f59b4a7a89944cc5ddce28502461fd2c",
+    "models/base/whcat1__5_9.txt": "8a882a81b73816308b57e69b2466b480625a04ac276ef77fada58a3a8db43ea7",
+    "models/base/whcat1__6_8.txt": "87e973549386c2eb09f9be41e72d5435174b20889c8b2dc6fba442868f57e874",
+    "models/base/whcat1__6_9.txt": "c0dfedf73953acecf58bb21e0350a848ace4e122aae0cd25e68100ad8ddec74b",
+    "models/base/whcat1__7_8.txt": "d8ccbb8612719cdd780562d6a6b4894dc24a29a908e4f9d1e1f63960b96d4566",
+    "models/base/whcat1__7_9.txt": "3e4460438ae070e1a4e63c9b422d00b0b90d85469b1a1f0b64002868d075c3fc",
+    "models/base/whcat1__8_8.txt": "7384636ea094c35f81807f19b52b899e0def88ee657373fa46d91d5c1fa4eb46",
+    "models/base/whcat1__8_9.txt": "5c22fb18fa201c16e73e01a09ec9ee338ec147a1d0e7043e9a0f68507d3f29c6",
+    "models/base/whcat1__9_8.txt": "064e3f41e58eab945eabc81bfc9a64c1a9963086fa42b47987e4c130ea6c8282",
+    "models/base/whcat1__9_9.txt": "0c3b5073ac9286e1c6f1f853786a0efeb9bc12ae579e0253a6d57d2e04a0b13b",
+    "models/meta_conditional_quantity.txt": "a96e664062746f3a5b832c38116d30e7cfb4d7974b899871e4ad74cafc8ca1d7",
+    "models/meta_sale_probability.txt": "25bb2c09501e662c5d194ee573acffece0a34ee6be613ad265869547c9385d47",
+    "models/base/schema.json": "26c1080e66cd69ee287ace9324681b88e35ea1f49781d7d4bd65be080295f9d0",
+    "snapshots/weekly_history_2026-07-26.npz": "0d29623ee6690d8ad295deb1228c183eff3eaded8a1ba4ec4e9d3402a0ce3f4c"
+  },
+  "forecast_sha256": {
+    "forecasts/baseline.csv": "9e856850bc105220562e10f18c26ae336fb61880fd0e3d495f230803f497b3a4",
+    "forecasts/conservative.csv": "518ab20d3bf9dc816d2f98ecc8a1f2ffe01b358e3a254f671aeabe2585eb709a",
+    "forecasts/selected.csv": "32664441f33c8b7d49a97d0b7f5d7a68bfe635b781fa8b94186f90aa98d7da22",
+    "forecasts/smape_experimental.csv": "cda47d5cd9381a491d2455fed4d5764856be89ce521eb8b827dd8fb046b47329"
+  }
+}

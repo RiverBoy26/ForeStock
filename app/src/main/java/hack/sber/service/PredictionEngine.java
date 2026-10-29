@@ -11,12 +11,14 @@ public interface PredictionEngine {
             Path stockFile,
             String article,
             String warehouse,
+            String variant,
             Writer output
     ) throws IOException;
 
     void predictAll(
             Path salesFile,
             Path stockFile,
+            String variant,
             Writer output
     ) throws IOException;
 }

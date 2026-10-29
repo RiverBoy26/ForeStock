@@ -83,6 +83,20 @@ public class PredictionService {
                 ));
     }
 
+    public void delete(DatasetRecord dataset) {
+        repository.delete(dataset);
+        Path salesPath = getSalesPath(dataset);
+        Path stockPath = getStockPath(dataset);
+        try {
+            Files.deleteIfExists(salesPath);
+            Files.deleteIfExists(stockPath);
+            Files.deleteIfExists(salesPath.getParent());
+        } catch (IOException ignored) {
+            // Database rollback is the functional requirement; orphan cleanup
+            // can be retried operationally if the filesystem is temporarily busy.
+        }
+    }
+
     public Path getSalesPath(DatasetRecord dataset) {
         return Path.of(dataset.getSalesFilePath());
     }

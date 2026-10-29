@@ -7,10 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation
-        .StreamingResponseBody;
-
-import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
 @RestController
@@ -29,37 +26,38 @@ public class PredictionController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<StreamingResponseBody> predict(
+    public ResponseEntity<byte[]> predict(
             @RequestParam("sales") org.springframework.web.multipart
                     .MultipartFile sales,
             @RequestParam("stock") org.springframework.web.multipart
-                    .MultipartFile stock
+                    .MultipartFile stock,
+            @RequestParam(defaultValue = "selected") String variant
     ) throws Exception {
 
         DatasetRecord dataset = service.upload(sales, stock);
 
-        StreamingResponseBody body = output -> {
-            var writer = new OutputStreamWriter(
-                    output, StandardCharsets.UTF_8);
-
+        try {
+            var writer = new StringWriter();
             engine.predict(
                     service.getSalesPath(dataset),
                     service.getStockPath(dataset),
                     null,
                     null,
+                    variant,
                     writer
             );
-
-            writer.flush();
-        };
-
-        return csvResponse("forecast.csv", body);
+            return csvResponse("forecast.csv", writer.toString());
+        } catch (Exception e) {
+            service.delete(dataset);
+            throw e;
+        }
     }
 
     @GetMapping
-    public ResponseEntity<StreamingResponseBody> predictFiltered(
+    public ResponseEntity<byte[]> predictFiltered(
             @RequestParam(required = false) String article,
-            @RequestParam(required = false) String warehouse
+            @RequestParam(required = false) String warehouse,
+            @RequestParam(defaultValue = "selected") String variant
     ) {
         if (isBlank(article) && isBlank(warehouse)) {
             throw new org.springframework.web.server
@@ -71,27 +69,30 @@ public class PredictionController {
 
         DatasetRecord dataset = service.getLatestDataset();
 
-        StreamingResponseBody body = output -> {
-            var writer = new OutputStreamWriter(
-                    output, StandardCharsets.UTF_8);
-
+        var writer = new StringWriter();
+        try {
             engine.predict(
                     service.getSalesPath(dataset),
                     service.getStockPath(dataset),
                     article,
                     warehouse,
+                    variant,
                     writer
             );
-
-            writer.flush();
-        };
-
-        return csvResponse("filtered_forecast.csv", body);
+        } catch (java.io.IOException e) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_GATEWAY,
+                    "Не удалось получить прогноз от ML-сервиса",
+                    e
+            );
+        }
+        return csvResponse("filtered_forecast.csv", writer.toString());
     }
 
     @GetMapping("/all")
-    public ResponseEntity<StreamingResponseBody> predictAll(
-            @RequestParam(defaultValue = "csv") String format
+    public ResponseEntity<byte[]> predictAll(
+            @RequestParam(defaultValue = "csv") String format,
+            @RequestParam(defaultValue = "selected") String variant
     ) {
         if (!"csv".equalsIgnoreCase(format)) {
             throw new org.springframework.web.server
@@ -103,25 +104,27 @@ public class PredictionController {
 
         DatasetRecord dataset = service.getLatestDataset();
 
-        StreamingResponseBody body = output -> {
-            var writer = new OutputStreamWriter(
-                    output, StandardCharsets.UTF_8);
-
+        var writer = new StringWriter();
+        try {
             engine.predictAll(
                     service.getSalesPath(dataset),
                     service.getStockPath(dataset),
+                    variant,
                     writer
             );
-
-            writer.flush();
-        };
-
-        return csvResponse("full_forecast.csv", body);
+        } catch (java.io.IOException e) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_GATEWAY,
+                    "Не удалось получить прогноз от ML-сервиса",
+                    e
+            );
+        }
+        return csvResponse("full_forecast.csv", writer.toString());
     }
 
-    private ResponseEntity<StreamingResponseBody> csvResponse(
+    private ResponseEntity<byte[]> csvResponse(
             String filename,
-            StreamingResponseBody body
+            String csv
     ) {
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("text/csv"))
@@ -129,7 +132,7 @@ public class PredictionController {
                         HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=\"" + filename + "\""
                 )
-                .body(body);
+                .body(csv.getBytes(StandardCharsets.UTF_8));
     }
 
     private boolean isBlank(String value) {
