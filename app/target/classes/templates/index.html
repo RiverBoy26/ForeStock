@@ -727,102 +727,43 @@
                 </p>
             </div>
 
-            <div class="upload-container">
+            <div class="upload-container" style="display: block;">
 
-                <!-- Файл продаж -->
-                <article class="upload-card">
-                    <div class="upload-icon" aria-hidden="true">
-                        📄
+                <!-- Единая форма для отправки обоих файлов -->
+                <form action="/predict" method="post" enctype="multipart/form-data" id="upload-form" class="upload-form">
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 20px;">
+                        <!-- Файл продаж -->
+                        <article class="upload-card">
+                            <div class="upload-icon" aria-hidden="true">📄</div>
+                            <div class="upload-title">Файл продаж</div>
+                            <p class="upload-description">История продаж по артикулам и датам в формате CSV.</p>
+
+                            <input type="file" id="file-sales" name="sales" class="file-input" accept=".csv,text/csv" required>
+                            <label for="file-sales" class="upload-btn">Выбрать CSV с продажами</label>
+                            <div class="file-name" id="name-sales" aria-live="polite">Файл не выбран</div>
+                        </article>
+
+                        <!-- Файл остатков -->
+                        <article class="upload-card">
+                            <div class="upload-icon" aria-hidden="true">🏭</div>
+                            <div class="upload-title">Файл складских остатков</div>
+                            <p class="upload-description">Информация о текущих остатках товаров на складах.</p>
+
+                            <input type="file" id="file-stocks" name="stock" class="file-input" accept=".csv,text/csv" required>
+                            <label for="file-stocks" class="upload-btn">Выбрать CSV с остатками</label>
+                            <div class="file-name" id="name-stocks" aria-live="polite">Файл не выбран</div>
+                        </article>
                     </div>
 
-                    <div class="upload-title">
-                        Файл продаж
+                    <!-- Кнопка отправки (появляется после выбора обоих файлов) -->
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button type="submit" id="submit-btn" class="upload-btn" style="max-width: 300px; margin: 0 auto;" disabled>
+                            Запустить прогнозирование
+                        </button>
                     </div>
 
-                    <p class="upload-description">
-                        История продаж по артикулам и датам
-                        в формате CSV.
-                    </p>
-
-                    <form action="/upload-sales"
-                          method="post"
-                          enctype="multipart/form-data"
-                          class="upload-form"
-                          id="form-sales">
-
-                        <input type="file"
-                               id="file-sales"
-                               name="file"
-                               class="file-input"
-                               accept=".csv,text/csv"
-                               aria-label="Выбрать CSV-файл продаж"
-                               required>
-
-                        <label for="file-sales" class="upload-btn">
-                            Выбрать CSV с продажами
-                        </label>
-
-                        <div class="file-name"
-                             id="name-sales"
-                             aria-live="polite">
-                            Файл не выбран
-                        </div>
-
-                        <noscript>
-                            <button type="submit" class="upload-btn">
-                                Загрузить файл
-                            </button>
-                        </noscript>
-                    </form>
-                </article>
-
-                <!-- Файл складских остатков -->
-                <article class="upload-card">
-                    <div class="upload-icon" aria-hidden="true">
-                        🏭
-                    </div>
-
-                    <div class="upload-title">
-                        Файл складских остатков
-                    </div>
-
-                    <p class="upload-description">
-                        Информация о текущих остатках товаров
-                        на складах в формате CSV.
-                    </p>
-
-                    <form action="/upload-stocks"
-                          method="post"
-                          enctype="multipart/form-data"
-                          class="upload-form"
-                          id="form-stocks">
-
-                        <input type="file"
-                               id="file-stocks"
-                               name="file"
-                               class="file-input"
-                               accept=".csv,text/csv"
-                               aria-label="Выбрать CSV-файл остатков"
-                               required>
-
-                        <label for="file-stocks" class="upload-btn">
-                            Выбрать CSV с остатками
-                        </label>
-
-                        <div class="file-name"
-                             id="name-stocks"
-                             aria-live="polite">
-                            Файл не выбран
-                        </div>
-
-                        <noscript>
-                            <button type="submit" class="upload-btn">
-                                Загрузить файл
-                            </button>
-                        </noscript>
-                    </form>
-                </article>
-
+                </form>
             </div>
         </section>
 
@@ -946,9 +887,34 @@
             HTMLFormElement.prototype.submit.call(form);
         });
     }
+    // Отображение выбранного файла
+    function setupFileInput(inputId, nameId) {
+        const input = document.getElementById(inputId);
+        const nameDiv = document.getElementById(nameId);
+        const submitBtn = document.getElementById('submit-btn');
 
-    setupFileUpload('file-sales', 'form-sales', 'name-sales');
-    setupFileUpload('file-stocks', 'form-stocks', 'name-stocks');
+        if (!input || !nameDiv) return;
+
+        input.addEventListener('change', () => {
+            const file = input.files && input.files[0];
+            if (file) {
+                nameDiv.textContent = file.name;
+            } else {
+                nameDiv.textContent = 'Файл не выбран';
+            }
+
+            // Проверяем, выбраны ли оба файла
+            const salesFile = document.getElementById('file-sales').files.length;
+            const stockFile = document.getElementById('file-stocks').files.length;
+
+            if (salesFile > 0 && stockFile > 0) {
+                submitBtn.disabled = false;
+            }
+        });
+    }
+
+    setupFileInput('file-sales', 'name-sales');
+    setupFileInput('file-stocks', 'name-stocks');
 </script>
 
 </body>
