@@ -13,6 +13,8 @@ import org.springframework.web.servlet.mvc.method.annotation
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
+import hack.sber.service.UnconfiguredPredictionEngine;
+
 @RestController
 @RequestMapping("/predict")
 public class PredictionController {
@@ -30,26 +32,27 @@ public class PredictionController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<StreamingResponseBody> predict(
-            @RequestParam("sales") org.springframework.web.multipart
-                    .MultipartFile sales,
-            @RequestParam("stock") org.springframework.web.multipart
-                    .MultipartFile stock
+            @RequestParam("sales") org.springframework.web.multipart.MultipartFile sales,
+            @RequestParam("stock") org.springframework.web.multipart.MultipartFile stock
     ) throws Exception {
 
         DatasetRecord dataset = service.upload(sales, stock);
 
-        StreamingResponseBody body = output -> {
-            var writer = new OutputStreamWriter(
-                    output, StandardCharsets.UTF_8);
+        // Если движок не настроен, выбрасываем ошибку ДО отправки заголовков
+        if (engine instanceof UnconfiguredPredictionEngine) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.NOT_IMPLEMENTED,
+                    "ML-модель прогнозирования ещё не подключена. Но файлы успешно загружены и проверены!"
+            );
+        }
 
+        StreamingResponseBody body = output -> {
+            var writer = new OutputStreamWriter(output, StandardCharsets.UTF_8);
             engine.predict(
                     service.getSalesPath(dataset),
                     service.getStockPath(dataset),
-                    null,
-                    null,
-                    writer
+                    null, null, writer
             );
-
             writer.flush();
         };
 

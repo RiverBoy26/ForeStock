@@ -25,12 +25,16 @@ public class CsvValidationService {
             "warehouse_name", "category_lvl_1",
             "category_lvl_2", "category_lvl_3",
             "article", "characteristic", "quantity",
-            "sales_sum", "cost_price", "discount_sum",
-            "volume_weight"
+            "sales_sum",
+            "cost_price",//ИХ НЕТ В ТРЕНИРОВОЧНЫХ ДАННЫХ
+            "discount_sum"
+            ,"volume_weight"//ИХ НЕТ В ТРЕНИРОВОЧНЫХ ДАННЫХ
     );
 
     private static final Set<String> STOCK_COLUMNS = Set.of(
-            "date", "warehouse_name", "char_article", "stock"
+            "date", "warehouse_name",
+            "article",//"char_article",//НАДО ПРОВЕРИТЬ ИМЯ СТОЛБЦА
+            "stock"
     );
 
     public LocalDate validateSales(Path file) throws IOException {
