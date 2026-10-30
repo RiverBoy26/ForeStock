@@ -26,14 +26,14 @@ public class CsvValidationService {
             "category_lvl_2", "category_lvl_3",
             "article", "characteristic", "quantity",
             "sales_sum",
-            //"cost_price",
+            "cost_price",//ИХ НЕТ В ТРЕНИРОВОЧНЫХ ДАННЫХ
             "discount_sum"
-            //,"volume_weight"
+            ,"volume_weight"//ИХ НЕТ В ТРЕНИРОВОЧНЫХ ДАННЫХ
     );
 
     private static final Set<String> STOCK_COLUMNS = Set.of(
             "date", "warehouse_name",
-            "article",//"char_article",
+            "article",//"char_article",//НАДО ПРОВЕРИТЬ ИМЯ СТОЛБЦА
             "stock"
     );
 

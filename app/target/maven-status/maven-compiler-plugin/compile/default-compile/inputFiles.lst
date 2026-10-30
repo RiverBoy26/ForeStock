@@ -1,9 +1,0 @@
-D:\Hackaton Sber\ForeStock\app\src\main\java\hack\sber\controller\PredictionController.java
-D:\Hackaton Sber\ForeStock\app\src\main\java\hack\sber\Main.java
-D:\Hackaton Sber\ForeStock\app\src\main\java\hack\sber\model\DatasetRecord.java
-D:\Hackaton Sber\ForeStock\app\src\main\java\hack\sber\model\ForecastRow.java
-D:\Hackaton Sber\ForeStock\app\src\main\java\hack\sber\repository\DatasetRepository.java
-D:\Hackaton Sber\ForeStock\app\src\main\java\hack\sber\service\CsvValidationService.java
-D:\Hackaton Sber\ForeStock\app\src\main\java\hack\sber\service\PredictionEngine.java
-D:\Hackaton Sber\ForeStock\app\src\main\java\hack\sber\service\PredictionService.java
-D:\Hackaton Sber\ForeStock\app\src\main\java\hack\sber\service\UnconfiguredPredictionEngine.java
