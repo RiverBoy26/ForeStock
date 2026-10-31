@@ -13,7 +13,7 @@ from app.snapshot import load_dataset
 
 
 def write_inputs(tmp_path: Path, *, warehouse: str, article: str):
-    dates = pd.date_range("2025-09-07", "2026-10-25", freq="W-SUN")
+    dates = pd.date_range("2025-07-27", "2026-07-26", freq="W-SUN")
     sales = pd.DataFrame(
         {
             "date": dates.strftime("%Y-%m-%d"),
@@ -24,6 +24,7 @@ def write_inputs(tmp_path: Path, *, warehouse: str, article: str):
             "quantity": 1.0,
             "category_lvl_1": "ignored-reference-encoding-is-used",
             "category_lvl_2": "ignored-reference-encoding-is-used",
+            "category_lvl_3": "ignored-reference-encoding-is-used",
             "characteristic": "ignored-reference-encoding-is-used",
             "sales_sum": 10.0,
             "discount_sum": 0.0,
@@ -46,11 +47,11 @@ def write_inputs(tmp_path: Path, *, warehouse: str, article: str):
 
 class DynamicInferenceTest(unittest.TestCase):
 
-    def test_exact_52_complete_weeks_are_accepted(self):
+    def test_exact_52_complete_weeks_on_supported_origin_are_accepted(self):
         reference = load_dataset(ROOT / "snapshots" / "weekly_history_2026-07-26.npz")
         warehouse = reference.warehouses[0]
         article = reference.articles[0]
-        dates = pd.date_range("2025-10-27", "2026-10-25", freq="D")
+        dates = pd.date_range("2025-07-27", "2026-07-26", freq="D")
 
         with tempfile.TemporaryDirectory() as name:
             directory = Path(name)
@@ -66,6 +67,7 @@ class DynamicInferenceTest(unittest.TestCase):
                     "quantity": 1.0,
                     "category_lvl_1": "category-1",
                     "category_lvl_2": "category-2",
+                    "category_lvl_3": "category-3",
                     "characteristic": "characteristic",
                     "sales_sum": 1.0,
                     "discount_sum": 0.0,
@@ -85,9 +87,9 @@ class DynamicInferenceTest(unittest.TestCase):
                 stock_path,
                 ROOT / "snapshots" / "weekly_history_2026-07-26.npz",
             )
-            self.assertEqual(str(dataset.weeks[-1].date()), "2026-10-19")
+            self.assertEqual(str(dataset.weeks[-1].date()), "2026-07-20")
 
-    def test_dynamic_inference_uses_future_calendar(self):
+    def test_dynamic_inference_uses_supported_frozen_calendar(self):
         reference = load_dataset(ROOT / "snapshots" / "weekly_history_2026-07-26.npz")
         with tempfile.TemporaryDirectory() as name:
             sales_path, stock_path = write_inputs(
@@ -100,13 +102,13 @@ class DynamicInferenceTest(unittest.TestCase):
                 stock_path,
                 ROOT / "snapshots" / "weekly_history_2026-07-26.npz",
             )
-            self.assertEqual(str(dataset.weeks[-1].date()), "2026-10-19")
+            self.assertEqual(str(dataset.weeks[-1].date()), "2026-07-20")
             frame = predict_dataset(
                 dataset, ROOT / "models" / "base", ROOT / "models", "selected"
             )
             self.assertEqual(len(frame), 79_101)
-            self.assertEqual(frame.week.min(), "2026-10-26")
-            self.assertEqual(frame.week.max(), "2026-12-21")
+            self.assertEqual(frame.week.min(), "2026-07-27")
+            self.assertEqual(frame.week.max(), "2026-09-21")
             self.assertTrue(frame.quantity.ge(0).all())
 
     def test_dynamic_inference_rejects_unknown_catalog_value(self):
@@ -153,8 +155,8 @@ class DynamicInferenceTest(unittest.TestCase):
                         )
                 self.assertEqual(response.status_code, 200, response.text)
                 self.assertEqual(response.headers["x-model-version"], "7.4.0")
-                self.assertEqual(response.headers["x-forecast-start"], "2026-11-02")
-                self.assertEqual(response.headers["x-forecast-end"], "2026-11-16")
+                self.assertEqual(response.headers["x-forecast-start"], "2026-08-03")
+                self.assertEqual(response.headers["x-forecast-end"], "2026-08-17")
                 self.assertEqual(response.headers["x-forecast-interval"], "2-4")
                 self.assertEqual(len(response.text.strip().splitlines()), 4)
             finally:

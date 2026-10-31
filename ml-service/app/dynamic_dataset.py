@@ -8,6 +8,7 @@ exact encodings.
 from __future__ import annotations
 
 from pathlib import Path
+import re
 
 import numpy as np
 import pandas as pd
@@ -25,6 +26,7 @@ REQUIRED_SALES_COLUMNS = {
     "quantity",
     "category_lvl_1",
     "category_lvl_2",
+    "category_lvl_3",
     "characteristic",
     "sales_sum",
     "discount_sum",
@@ -110,10 +112,43 @@ def _complete_history_end(sales_max: pd.Timestamp, stock_max: pd.Timestamp) -> p
     return shared_max - pd.Timedelta(days=days_since_sunday)
 
 
+def _resolve_cutoff(
+    sales: pd.DataFrame,
+    stock: pd.DataFrame,
+    cutoff_date: str | pd.Timestamp | None,
+) -> pd.Timestamp:
+    """Resolve a cutoff supported by the immutable v7.4 artifacts.
+
+    The current weights and forecast calendar were trained for one origin only.
+    Accepting another Sunday would make the calendar/origin features out of
+    domain, even if the history window could be shifted mechanically.
+    """
+    if cutoff_date is None:
+        cutoff = _complete_history_end(sales['date'].max(), stock['date'].max())
+    else:
+        if isinstance(cutoff_date, str) and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", cutoff_date):
+            raise ValueError('cutoff_date must use YYYY-MM-DD')
+        try:
+            cutoff = pd.Timestamp(cutoff_date)
+        except Exception as exc:
+            raise ValueError('cutoff_date must use YYYY-MM-DD') from exc
+        if cutoff.tz is not None or cutoff != cutoff.normalize():
+            raise ValueError('cutoff_date must be a date without a time or timezone')
+        if cutoff.weekday() != 6:
+            raise ValueError('cutoff_date must be a Sunday')
+    supported = pd.Timestamp('2026-07-26')
+    if cutoff != supported:
+        raise ValueError(
+            f'MODEL_OUT_OF_DOMAIN: frozen Nonton v7.4 supports cutoff_date={supported.date()} only'
+        )
+    return cutoff
+
+
 def build_dynamic_dataset(
     sales_path: Path,
     stock_path: Path,
     reference_snapshot_path: Path,
+    cutoff_date: str | pd.Timestamp | None = None,
 ) -> base.Dataset:
     reference = load_dataset(reference_snapshot_path)
     sales = _read_csv(sales_path, "sales")
@@ -143,7 +178,7 @@ def build_dynamic_dataset(
     _reject_unknown(stock, "warehouse_name", set(warehouses), "stock")
     _reject_unknown(stock, "article", set(articles), "stock")
 
-    complete_sunday = _complete_history_end(sales["date"].max(), stock["date"].max())
+    complete_sunday = _resolve_cutoff(sales, stock, cutoff_date)
     forecast_start = complete_sunday + pd.Timedelta(days=1)
     window_start = forecast_start - pd.Timedelta(weeks=base.N_WEEKS)
     observed_span = complete_sunday - sales["date"].min().normalize() + pd.Timedelta(days=1)

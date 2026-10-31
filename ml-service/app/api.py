@@ -111,6 +111,7 @@ def dynamic_forecast(
     variant:str='selected',
     warehouse_name:str|None=None,
     article:str|None=None,
+    cutoff_date:str|None=None,
     start_week:int=Query(1,ge=1,le=9),
     end_week:int=Query(9,ge=1,le=9),
 ):
@@ -129,6 +130,7 @@ def dynamic_forecast(
                     sales_path,
                     stock_path,
                     ROOT/'snapshots'/'weekly_history_2026-07-26.npz',
+                    cutoff_date=cutoff_date,
                 )
                 frame=predict_dataset(dataset,ROOT/'models'/'base',ROOT/'models',variant)
         except ValueError as exc:
