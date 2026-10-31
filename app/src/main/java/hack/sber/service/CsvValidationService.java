@@ -2,6 +2,7 @@ package hack.sber.service;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Set;
@@ -25,10 +27,7 @@ public class CsvValidationService {
             "warehouse_name", "category_lvl_1",
             "category_lvl_2", "category_lvl_3",
             "article", "characteristic", "quantity",
-            "sales_sum",
-            "cost_price",//ИХ НЕТ В ТРЕНИРОВОЧНЫХ ДАННЫХ
-            "discount_sum"
-            ,"volume_weight"//ИХ НЕТ В ТРЕНИРОВОЧНЫХ ДАННЫХ
+            "sales_sum", "discount_sum"
     );
 
     private static final Set<String> STOCK_COLUMNS = Set.of(
@@ -77,10 +76,10 @@ public class CsvValidationService {
 
         long days = last.toEpochDay() - first.toEpochDay() + 1;
 
-        if (days < 180) {
+        if (days < 364) {
             throw new ResponseStatusException(
                     HttpStatus.UNPROCESSABLE_ENTITY,
-                    "История продаж должна охватывать минимум 180 дней"
+                    "История продаж должна охватывать минимум 52 недели"
             );
         }
 

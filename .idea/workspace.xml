@@ -4,30 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="21350413-d4e6-4e05-bdaa-9bd9021d8f6e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/resources/templates/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/.gitattributes" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/build.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/settings.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/test/java/org/example/sberhak/SberHakApplicationTests.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/uploads/car_evaluation.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/hack/sber/service/CsvValidationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/hack/sber/service/CsvValidationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/.gradle/9.0.0/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.gradle/9.0.0/checksums/checksums.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/.gradle/9.0.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.gradle/9.0.0/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/.gradle/9.8.2/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.gradle/9.8.2/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/.gradle/file-system.probe" beforeDir="false" />
-    </list>
+    <list default="true" id="21350413-d4e6-4e05-bdaa-9bd9021d8f6e" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -97,7 +74,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "Spring Boot.SberHakApplication.executor": "Run",
-    "git-widget-placeholder": "Merging develop",
+    "git-widget-placeholder": "develop",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/User/Desktop/ForeStock",
@@ -153,7 +130,7 @@
       <workItem from="1792774364705" duration="43000" />
       <workItem from="1793298378043" duration="2929000" />
       <workItem from="1793356733434" duration="5846000" />
-      <workItem from="1793473106218" duration="326000" />
+      <workItem from="1793473106218" duration="953000" />
     </task>
     <servers />
   </component>
