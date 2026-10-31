@@ -1,0 +1,38 @@
+{
+  "release": "2026-10-31",
+  "original_models_preserved": 41,
+  "new_model_count": 1,
+  "sum_original_forecast": 222068.6410991,
+  "sum_experimental_forecast": 224762.2896646,
+  "target_zero_mask_identical": true,
+  "files": {
+    "forecasts/v81_catboost.csv": {
+      "sha256": "12e6a40c8f55a97687da4bfee20f6f15ebecb901e19db1d2cc98433fa6ba6174",
+      "size": 4046715
+    },
+    "forecasts/v82_confidence_amount.csv": {
+      "sha256": "c277422128049612fecceba61b81561bf92a121c01dd82b84f9a112b6f0997e3",
+      "size": 3968876
+    },
+    "models/experimental/conditional_positive_quantity.cbm": {
+      "sha256": "7e1066360bcefc8c9809e247223f6c6b32211f2d03dc6888ee329c238abd34c9",
+      "size": 400888
+    },
+    "models/catboost/catboost_prob.cbm": {
+      "sha256": "0a52b91f495154aabd1e2590d071c27dbca0612ac1c35ac1d12dbb6d20d0a48c",
+      "size": 401880
+    },
+    "models/catboost/catboost_logquantity.cbm": {
+      "sha256": "812c76d73209d55b685c17f4e5088f346178dc657536a8391071f6d5f6e1e94b",
+      "size": 400736
+    },
+    "research_v82/weekly_comparison.png": {
+      "sha256": "7837f7a2d914122123a4b4ebeba618e2708b95dd869c023f2215881c37973162",
+      "size": 103642
+    },
+    "research_v82/conditional_router_eval.csv": {
+      "sha256": "b76531ed537cdca4c16edad3a70045532e3f6feb2d021c9997cdde3d8ba1b195",
+      "size": 10091
+    }
+  }
+}

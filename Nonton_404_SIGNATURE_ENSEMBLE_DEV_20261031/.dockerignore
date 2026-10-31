@@ -1,0 +1,9 @@
+training/oof
+research
+tests
+examples
+*.zip
+.venv
+__pycache__
+*.pyc
+*.log

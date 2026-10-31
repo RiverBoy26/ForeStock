@@ -1,0 +1,15 @@
+{
+  "cutoff": "2026-07-26",
+  "train_weeks": 134,
+  "excluded_future_sales_rows": 13543,
+  "warehouses": 11,
+  "articles": 799,
+  "categories": 14,
+  "divisions": 16,
+  "group_count": 154,
+  "series_count": 8789,
+  "sum_quantity": 1809764.0,
+  "stock_loaded": false,
+  "source": "sales only for current models; historical stock can be validated with --check-stock",
+  "strict_asof_caveat": "Category codes are determined from entire allowed pre-cutoff history; early historical validation sees static mapping of categories not necessarily known at that time."
+}

@@ -1,0 +1,107 @@
+{
+  "status": "reconstruction, not original 2026-10-30 archive",
+  "date_cutoff": "2026-07-26",
+  "official_score_known": false,
+  "used_historical_folds": [
+    "2025-01-27",
+    "2025-04-07",
+    "2025-07-28",
+    "2025-10-06",
+    "2025-12-15",
+    "2026-03-02",
+    "2026-05-25"
+  ],
+  "historical_validation": "meta forward chain only, previously viewed origins, not untouched",
+  "outputs": {
+    "v6_baseline.csv": {
+      "total_quantity": 206366.890625,
+      "nonzero": 33198,
+      "sha256": "54e8d2aa7014b8bd68d6cdfc11ed36cdffc917464f79f6bd7021d4e6538ef981",
+      "weekly_quantity": [
+        22873.93,
+        22936.1,
+        23000.4,
+        23231.25,
+        23208.2,
+        22912.39,
+        22712.0,
+        22667.49,
+        22825.14
+      ]
+    },
+    "v7_routed.csv": {
+      "total_quantity": 202849.06309059035,
+      "nonzero": 33198,
+      "sha256": "709c3c56d91e3087f35b5371c9fb7e2258c012cf5ae0726005da7fcbe45e2961",
+      "weekly_quantity": [
+        22517.7,
+        22567.46,
+        22602.7,
+        22851.85,
+        22799.94,
+        22500.91,
+        22308.67,
+        22248.1,
+        22451.73
+      ]
+    },
+    "v7_hybrid_15.csv": {
+      "total_quantity": 202832.25499611767,
+      "nonzero": 33198,
+      "sha256": "a3a55ccfea977fe3e3f7c86f394a6ca33bcd62c9a7ba2a994e78348221d5bda9",
+      "weekly_quantity": [
+        22521.65,
+        22575.79,
+        22606.34,
+        22857.17,
+        22786.68,
+        22495.59,
+        22301.16,
+        22236.64,
+        22451.22
+      ]
+    },
+    "v7_hybrid_30.csv": {
+      "total_quantity": 202815.44690164505,
+      "nonzero": 33198,
+      "sha256": "3aaff9aca8325eeb3af376c9e05b1a202369865689e170cfe1445f42632919b7",
+      "weekly_quantity": [
+        22525.61,
+        22584.12,
+        22609.99,
+        22862.49,
+        22773.42,
+        22490.27,
+        22293.66,
+        22225.17,
+        22450.71
+      ]
+    }
+  },
+  "models": {
+    "joint.pt": "2b8b2f3701d3e59cadbe86b1a5590503d7fac301e1d618b8bc29fec69ded6d0c",
+    "macro.txt": "854ee53b3c481c55df88c3f9af4003b446752ff210737409f8f0bc57349ea9df",
+    "meta_quantity_corrector.txt": "fbc82e0a70f2a81bfc7fc7d0eba1dd4deb12dd940ed5fe642b98cc8c133bb40f",
+    "meta_router.txt": "3eab810b33ae5f352c7f974c95f32e353078a80c069bfd578d4e88a4b4329f00",
+    "sku_occurrence.txt": "a3055aa82386b8da62b24d7eed6a90b17c626c12c46502f2bf3a40184a003379",
+    "sku_positive_quantity.txt": "c13d967b71870236bd7a496869e7784f8eefdda4fa5b64298d7dfef41dfb2e8b"
+  },
+  "parameters": {
+    "out": ".\\results_MOE_FULL",
+    "reference": ".\\prognoz5.csv",
+    "mode": "full",
+    "fold_count": 7,
+    "max_train_origins": 36,
+    "min_train_origin": 26,
+    "rounds": 160,
+    "macro_rounds": 120,
+    "meta_rounds": 140,
+    "nn_epochs": 12,
+    "nn_batch": 2048,
+    "threads": 8,
+    "device": "auto",
+    "check_stock": false,
+    "no_final": false,
+    "save_fold_models": false
+  }
+}

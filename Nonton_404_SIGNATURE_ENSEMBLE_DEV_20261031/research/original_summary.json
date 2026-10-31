@@ -1,0 +1,34 @@
+{
+  "selection_method": "5 expanding-origin forward folds 2025-06 through 2026-03; no holdout targets",
+  "cutoff": "2026-07-26",
+  "new_family_candidates": [
+    {
+      "family": "horizon",
+      "config": "horizon_T0.53_B0.25_R0.035",
+      "file": "submission_horizon_candidate.csv",
+      "total": 233882.21875,
+      "zero_pct": 51.76925702582774,
+      "forward_mean_ratio": 1.0010866660628286
+    },
+    {
+      "family": "quantile",
+      "config": "quantile_T0.53_B0.25_R0.000",
+      "file": "submission_quantile_candidate.csv",
+      "total": 229058.25,
+      "zero_pct": 52.90325027496492,
+      "forward_mean_ratio": 1.001342717224355
+    },
+    {
+      "family": "catboost",
+      "config": "catboost_T0.53_B0.50_R0.000",
+      "file": "submission_catboost_candidate.csv",
+      "total": 222068.625,
+      "zero_pct": 53.24837865513711,
+      "forward_mean_ratio": 0.998895390677472
+    }
+  ],
+  "baseline": "v8 selected",
+  "baseline_reference_mean_relative": 1.0,
+  "warning": "No unseen official competition evaluation performed. Improvement only if mean_relative < 1 and stable on individual folds.",
+  "seconds": 276.7
+}

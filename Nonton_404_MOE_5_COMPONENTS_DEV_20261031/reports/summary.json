@@ -1,0 +1,43 @@
+{
+  "status": "reconstructed research Mixture of Experts; not the lost original research archive",
+  "components": 5,
+  "trained_weight_files": 6,
+  "cutoff": "2026-07-26",
+  "forecast_weeks": 9,
+  "rows": 79101,
+  "distinct_pairs": 8789,
+  "total_moe_hybrid15": 202832.2549997,
+  "total_official_catboost5": 222068.6410991,
+  "positive_moe": 33198,
+  "local_forward_validation_mean": {
+    "v6_baseline": {
+      "smape": 62.402432,
+      "wape": 52.106445,
+      "rmse": 3.11477,
+      "bias": 77.851262,
+      "rmsle": 0.533962
+    },
+    "v7_hybrid_15": {
+      "smape": 62.425588,
+      "wape": 52.011825,
+      "rmse": 3.10682,
+      "bias": 77.490288,
+      "rmsle": 0.532915
+    },
+    "v7_hybrid_30": {
+      "smape": 62.425818,
+      "wape": 52.029368,
+      "rmse": 3.107115,
+      "bias": 77.490375,
+      "rmsle": 0.532908
+    },
+    "v7_routed": {
+      "smape": 62.425895,
+      "wape": 52.015088,
+      "rmse": 3.112195,
+      "bias": 77.49082,
+      "rmsle": 0.532927
+    }
+  },
+  "official_score_of_MOE": "not evaluated"
+}

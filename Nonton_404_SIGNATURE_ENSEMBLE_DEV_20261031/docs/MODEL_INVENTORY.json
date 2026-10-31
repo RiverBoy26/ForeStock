@@ -1,0 +1,26 @@
+{
+  "status": "verified frozen 9-week competition inference; not dynamic",
+  "baseline": "v8.1 CatBoost == officially submitted прогноз_5",
+  "v81_model_count": 41,
+  "v82_model_count": 42,
+  "v83_model_count": 42,
+  "v81_models": {
+    "global": 2,
+    "warehouse": 11,
+    "warehouse_category": 24,
+    "recursive": 2,
+    "catboost": 2
+  },
+  "n_base_features": 116,
+  "n_catboost_features": 62,
+  "cutoff": "2026-07-26",
+  "prediction_weeks": 9,
+  "rows": 79101,
+  "official_score_baseline": "0.504 (historical leaderboard report; not evaluated for v82/v83)",
+  "forecast_files": {
+    "v8.1": "forecasts/v81_catboost.csv",
+    "v8.2": "forecasts/v82_confidence_amount.csv",
+    "v8.3 nearest": "forecasts/v83_nearest10.csv",
+    "v8.3 smape": "forecasts/v83_smape10.csv"
+  }
+}

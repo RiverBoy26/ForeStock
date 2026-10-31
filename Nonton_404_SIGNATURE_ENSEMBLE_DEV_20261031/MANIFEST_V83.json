@@ -1,0 +1,22 @@
+{
+  "base_release": "v8.2 full 2026-10-31",
+  "source": "user supplied v8.1, previously constructed v8.2",
+  "variants": {
+    "nearest": {
+      "filename": "v83_nearest10.csv",
+      "sha256": "2ff3bc0a96733bafd598fb06e0278d45a89e92d576fc457683392ef42a79b281",
+      "rows": 79101,
+      "total": 224228.38728800003,
+      "nonzero": 36981
+    },
+    "smape": {
+      "filename": "v83_smape10.csv",
+      "sha256": "b02c71608800188b84a1a766cb4f9ab68dca7730c0c455b403280e2d39d5f6b1",
+      "rows": 79101,
+      "total": 228244.38728800003,
+      "nonzero": 36981
+    }
+  },
+  "frozen_weights": "39 LightGBM + 2 CatBoost + 1 positive qty CatBoost",
+  "target_cutoff": "2026-07-26"
+}

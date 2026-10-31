@@ -1,0 +1,177 @@
+{
+  "description": "SHA-256 checksums for release content (excluding manifest itself)",
+  "files": {
+    "replay_windows.ps1": {
+      "sha256": "95c9a2309c3d6453cebc3e99400d2bc3c51b9caf94572cdd59f42398f7df2415",
+      "bytes": 377
+    },
+    "requirements.txt": {
+      "sha256": "3bd5fe38464e02f4085b25770a23eac866c582d8d6d74685fa2d34c4edaa3ea6",
+      "bytes": 101
+    },
+    "install_windows.ps1": {
+      "sha256": "f2a846ff5ba531710ee7b3003576cd75561d75617d3e252f207a5d05e25421a6",
+      "bytes": 286
+    },
+    "features.py": {
+      "sha256": "f09b4c30d591de9b880c6a55ec6de2b16a873afda5b196e0876c2b0c08ca6880",
+      "bytes": 4726
+    },
+    "ARCHITECTURE_AND_HANDOFF.md": {
+      "sha256": "eb0461bf629760535be5078a3911128c191fa7999ee33f15a02fb5630f15bd52",
+      "bytes": 3636
+    },
+    "retrain_windows.ps1": {
+      "sha256": "0620228298aa6d5dc3a6b9572b5ed15db8ebb03b3722e424e888b66cff42f939",
+      "bytes": 600
+    },
+    "final_expert_predictions.npz": {
+      "sha256": "9d3f1d43233dc09750df3a98031e8fe95d5cf0c88f86f9b44ff89423fa62096d",
+      "bytes": 853691
+    },
+    "compare.py": {
+      "sha256": "de32bce2792fe641b7d389b0f330aa2604085d5df3347329458c0d093efb76a1",
+      "bytes": 1831
+    },
+    "train.py": {
+      "sha256": "26eb4f1beff0009e94212c096bd42598af02eac4b797405eb6fb19ba6cdf4e33",
+      "bytes": 8933
+    },
+    "README.md": {
+      "sha256": "e76bca433daf4f9c4099f9aa11848483393973afd0fb20777dad0368abc02ebf",
+      "bytes": 13731
+    },
+    "data_utils.py": {
+      "sha256": "e66892d9d0f2fd9a6b493e9a890a57a7fd984b143d43e1febff03b3db05cc4e1",
+      "bytes": 9788
+    },
+    "oof_training_fingerprint.json": {
+      "sha256": "b3aaf712ad50e7842b30861972e80b66784396db30a8c8582932fcfded8e20bb",
+      "bytes": 268
+    },
+    "replay.py": {
+      "sha256": "48dfd070b420e4ff5a241ccecb8b16dc0f63318fb4d3fc3f6cb7f1813d74f98e",
+      "bytes": 4910
+    },
+    "training_config.json": {
+      "sha256": "3e728c628a2954537f96b058b314f33e3df81b71ce09872c94d72838a9d14f21",
+      "bytes": 386
+    },
+    "models.py": {
+      "sha256": "1c1c3253e62be18550f0ed99eec51adfba73005ddbc6ee896076e91f07781ce4",
+      "bytes": 9780
+    },
+    "test_pipeline.py": {
+      "sha256": "9f8eefbfa6489487a07bb8f978238d33f8489c68fa4594a765c1e557dacad065",
+      "bytes": 1856
+    },
+    "reports/comparison_weekly_verified.csv": {
+      "sha256": "46af13397f60402502cadf2fa91298f0c219a051919bdccfdde8a73c72629cfd",
+      "bytes": 403
+    },
+    "reports/manifest.json": {
+      "sha256": "c98e252b1782b11c4fd7891bd9a12bb6ab70468a9140dccc807e5868a4ce6656",
+      "bytes": 3014
+    },
+    "reports/comparison_v5_vs_MOE.png": {
+      "sha256": "ca13bb7a9f8060dd35c84524626e6598130b64c980680e2d034ddf104695a9c0",
+      "bytes": 119767
+    },
+    "reports/historical_metrics.csv": {
+      "sha256": "fbe5ab4ee3dfafccdc03e73b2268e0091b738ee492a30e8f46fd783dbf1485bc",
+      "bytes": 3011
+    },
+    "reports/summary.json": {
+      "sha256": "08a4ff71acd4150ef6d41ced364e9f9dc96a72de7f52a191cfb5a64588baa404",
+      "bytes": 1040
+    },
+    "reports/comparison_weekly.csv": {
+      "sha256": "b742e367a8783946ada4d8384102144fe1458cb58e805b9c86e3034b1c868cb7",
+      "bytes": 766
+    },
+    "oof/fold_2.npz": {
+      "sha256": "d8eb0217b3925be5fa46b10c36b63920c78fd5445649d4fbcfcae8ba0414f46c",
+      "bytes": 800292
+    },
+    "oof/fold_5.npz": {
+      "sha256": "4d5b6c52f09d38a386599b11ee5e0b4b33dadee7fb3aecda0c9fb44e9f54b97a",
+      "bytes": 872217
+    },
+    "oof/fold_1.npz": {
+      "sha256": "2a52897012b00495333bc9ed4189e99e0a9e342f6dc8d4c3e527762c2968283c",
+      "bytes": 778581
+    },
+    "oof/fold_6.npz": {
+      "sha256": "2dff5e7ff32c8f7f641fdb2ae0de78ed4a0a988bc48d7f7dbe5ce0b78475efc4",
+      "bytes": 875718
+    },
+    "oof/fold_4.npz": {
+      "sha256": "48d38f6114175ecc204057dd35c4bfd2a8590b56e08d1b45be031f0c121d60cc",
+      "bytes": 892330
+    },
+    "oof/fold_0.npz": {
+      "sha256": "3b856f211990b90f619de3eeb23b21d25e279e85a9b76a2fae8fb4f8b3131f62",
+      "bytes": 767233
+    },
+    "oof/fold_3.npz": {
+      "sha256": "c21e57c464f7ea972302299a25e3470e240f617ce0091ce9aa19a8b1f12a3d7f",
+      "bytes": 850399
+    },
+    "data/history.npz": {
+      "sha256": "32dac8184c6ed3eb3a0d7d9d9d7fe636b7aaa82b3e44968fb18de3bd44c44e51",
+      "bytes": 671652
+    },
+    "data/dataset_manifest.json": {
+      "sha256": "d3d81f3cf6eb9af7d6419ca545fa91b1f3bfbac4e3d349ababb7ca488a0d2889",
+      "bytes": 575
+    },
+    "data/series.csv": {
+      "sha256": "572bf4f53d4313fac0eae3d815b01fde1456c5838e8f54b84ecb2e9c4744cbf1",
+      "bytes": 558138
+    },
+    "forecasts/v7_hybrid_15.csv": {
+      "sha256": "a3a55ccfea977fe3e3f7c86f394a6ca33bcd62c9a7ba2a994e78348221d5bda9",
+      "bytes": 4430978
+    },
+    "forecasts/v7_hybrid_30.csv": {
+      "sha256": "3aaff9aca8325eeb3af376c9e05b1a202369865689e170cfe1445f42632919b7",
+      "bytes": 4430978
+    },
+    "forecasts/v6_baseline.csv": {
+      "sha256": "54e8d2aa7014b8bd68d6cdfc11ed36cdffc917464f79f6bd7021d4e6538ef981",
+      "bytes": 4431067
+    },
+    "forecasts/v7_routed.csv": {
+      "sha256": "709c3c56d91e3087f35b5371c9fb7e2258c012cf5ae0726005da7fcbe45e2961",
+      "bytes": 4430978
+    },
+    "reference/official_forecast5.csv": {
+      "sha256": "12e6a40c8f55a97687da4bfee20f6f15ebecb901e19db1d2cc98433fa6ba6174",
+      "bytes": 4046715
+    },
+    "models_final/joint.pt": {
+      "sha256": "2b8b2f3701d3e59cadbe86b1a5590503d7fac301e1d618b8bc29fec69ded6d0c",
+      "bytes": 63153
+    },
+    "models_final/meta_router.txt": {
+      "sha256": "3eab810b33ae5f352c7f974c95f32e353078a80c069bfd578d4e88a4b4329f00",
+      "bytes": 240045
+    },
+    "models_final/sku_occurrence.txt": {
+      "sha256": "a3055aa82386b8da62b24d7eed6a90b17c626c12c46502f2bf3a40184a003379",
+      "bytes": 422047
+    },
+    "models_final/macro.txt": {
+      "sha256": "854ee53b3c481c55df88c3f9af4003b446752ff210737409f8f0bc57349ea9df",
+      "bytes": 221249
+    },
+    "models_final/sku_positive_quantity.txt": {
+      "sha256": "c13d967b71870236bd7a496869e7784f8eefdda4fa5b64298d7dfef41dfb2e8b",
+      "bytes": 428553
+    },
+    "models_final/meta_quantity_corrector.txt": {
+      "sha256": "fbc82e0a70f2a81bfc7fc7d0eba1dd4deb12dd940ed5fe642b98cc8c133bb40f",
+      "bytes": 240374
+    }
+  }
+}

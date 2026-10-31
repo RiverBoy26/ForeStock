@@ -1,0 +1,8 @@
+services:
+  catboost-api:
+    build: .
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      NONTON_API_KEY: "${NONTON_API_KEY:?Set NONTON_API_KEY}"
+    restart: unless-stopped

@@ -1,0 +1,18 @@
+{
+  "out": ".\\results_MOE_FULL",
+  "reference": ".\\prognoz5.csv",
+  "mode": "full",
+  "fold_count": 7,
+  "max_train_origins": 36,
+  "min_train_origin": 26,
+  "rounds": 160,
+  "macro_rounds": 120,
+  "meta_rounds": 140,
+  "nn_epochs": 12,
+  "nn_batch": 2048,
+  "threads": 8,
+  "device": "auto",
+  "check_stock": false,
+  "no_final": false,
+  "save_fold_models": false
+}

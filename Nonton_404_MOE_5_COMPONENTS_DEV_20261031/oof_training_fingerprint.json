@@ -1,0 +1,11 @@
+{
+  "max_train_origins": 36,
+  "min_train_origin": 26,
+  "rounds": 160,
+  "macro_rounds": 120,
+  "nn_epochs": 12,
+  "nn_batch": 2048,
+  "threads": 8,
+  "device": "auto",
+  "dataset_sha256": "32dac8184c6ed3eb3a0d7d9d9d7fe636b7aaa82b3e44968fb18de3bd44c44e51"
+}
