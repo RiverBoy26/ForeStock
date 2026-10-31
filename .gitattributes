@@ -1,0 +1,2 @@
+ml-service/models/** -text
+ml-service/snapshots/** -text

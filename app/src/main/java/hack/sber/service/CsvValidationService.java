@@ -2,6 +2,7 @@ package hack.sber.service;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Set;
@@ -25,12 +27,11 @@ public class CsvValidationService {
             "warehouse_name", "category_lvl_1",
             "category_lvl_2", "category_lvl_3",
             "article", "characteristic", "quantity",
-            "sales_sum", "cost_price", "discount_sum",
-            "volume_weight"
+            "sales_sum", "discount_sum"
     );
 
     private static final Set<String> STOCK_COLUMNS = Set.of(
-            "date", "warehouse_name", "char_article", "stock"
+            "date", "warehouse_name", "article", "stock"
     );
 
     public LocalDate validateSales(Path file) throws IOException {
@@ -73,17 +74,19 @@ public class CsvValidationService {
 
         long days = last.toEpochDay() - first.toEpochDay() + 1;
 
-        if (days < 180) {
+        if (days < 364) {
             throw new ResponseStatusException(
                     HttpStatus.UNPROCESSABLE_ENTITY,
-                    "История продаж должна охватывать минимум 180 дней"
+                    "История продаж должна охватывать минимум 52 недели"
             );
         }
 
         return last;
     }
 
-    public void validateStock(Path file) throws IOException {
+    public LocalDate validateStock(Path file) throws IOException {
+        LocalDate lastDate = null;
+
         try (Reader reader = Files.newBufferedReader(
                 file, StandardCharsets.UTF_8);
              CSVParser parser = CSVFormat.DEFAULT.builder()
@@ -95,13 +98,80 @@ public class CsvValidationService {
             validateColumns(parser.getHeaderMap().keySet(),
                     STOCK_COLUMNS, "stock");
 
-            if (!parser.iterator().hasNext()) {
+            for (CSVRecord row : parser) {
+                try {
+                    LocalDate date = LocalDate.parse(row.get("date"));
+                    if (lastDate == null || date.isAfter(lastDate)) {
+                        lastDate = date;
+                    }
+                } catch (DateTimeParseException |
+                         IllegalArgumentException e) {
+                    throw new ResponseStatusException(
+                            HttpStatus.UNPROCESSABLE_ENTITY,
+                            "Некорректная дата в stock: строка "
+                                    + row.getRecordNumber()
+                    );
+                }
+            }
+
+            if (lastDate == null) {
                 throw new ResponseStatusException(
                         HttpStatus.UNPROCESSABLE_ENTITY,
                         "Файл stock не содержит данных"
                 );
             }
         }
+
+        return lastDate;
+    }
+
+    public void retainDateRange(
+            Path file,
+            LocalDate startInclusive,
+            LocalDate endInclusive,
+            String fileName
+    ) throws IOException {
+        Path temporary = Files.createTempFile(
+                file.getParent(), fileName + "-window-", ".csv");
+        long retainedRows = 0;
+
+        try (Reader reader = Files.newBufferedReader(
+                file, StandardCharsets.UTF_8);
+             CSVParser parser = CSVFormat.DEFAULT.builder()
+                     .setHeader()
+                     .setSkipHeaderRecord(true)
+                     .get()
+                     .parse(reader);
+             var writer = Files.newBufferedWriter(
+                     temporary, StandardCharsets.UTF_8);
+             CSVPrinter printer = CSVFormat.DEFAULT.builder()
+                     .setHeader(parser.getHeaderNames().toArray(String[]::new))
+                     .get()
+                     .print(writer)) {
+
+            for (CSVRecord row : parser) {
+                LocalDate date = LocalDate.parse(row.get("date"));
+                if (!date.isBefore(startInclusive)
+                        && !date.isAfter(endInclusive)) {
+                    printer.printRecord(row);
+                    retainedRows++;
+                }
+            }
+        } catch (IOException | RuntimeException e) {
+            Files.deleteIfExists(temporary);
+            throw e;
+        }
+
+        if (retainedRows == 0) {
+            Files.deleteIfExists(temporary);
+            throw new ResponseStatusException(
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    "В файле " + fileName
+                            + " нет данных за последние 52 недели"
+            );
+        }
+
+        Files.move(temporary, file, StandardCopyOption.REPLACE_EXISTING);
     }
 
     private void validateColumns(

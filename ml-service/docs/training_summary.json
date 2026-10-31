@@ -1,0 +1,117 @@
+{
+  "model": "Nonton v7.4 META GATE + CONDITIONAL QUANTITY",
+  "cutoff": "2026-07-26",
+  "final_target": "2026-07-27 through 2026-09-27",
+  "dev_folds": [
+    "2025-01-27",
+    "2025-04-07",
+    "2025-06-16",
+    "2025-08-25",
+    "2025-11-03",
+    "2026-01-12",
+    "2026-03-23"
+  ],
+  "dev_forward_folds": [
+    "2025-06-16",
+    "2025-08-25",
+    "2025-11-03",
+    "2026-01-12",
+    "2026-03-23"
+  ],
+  "holdout": "2026-05-25",
+  "holdout_used_for_selection": false,
+  "base_training": {
+    "max_origins": 0,
+    "rounds": 240,
+    "groups": 24
+  },
+  "chosen": "META_P0.550_V0.15_A7",
+  "selection": [
+    0.55,
+    0.15,
+    7
+  ],
+  "score_warning": "Local relative weighted metric ratios, NOT organizer rank-score",
+  "holdout_warning": "May 25 holdout has repeatedly been inspected, it is REPORT ONLY not an untouched benchmark",
+  "leaderboard_top5": [
+    {
+      "candidate": "META_P0.550_V0.15_A7",
+      "score_to_minimize": 0.994468540825852,
+      "mean_relative_weighted_score": 0.9943654773043434,
+      "smape_worst_delta_pp": -0.12398648444618487,
+      "n_forward_folds": 5,
+      "mean_SMAPE": 60.68552488342434,
+      "mean_WAPE": 50.763260997371475,
+      "mean_RMSE": 2.686608141422246,
+      "mean_Bias": 76.98561485061217,
+      "mean_RMSLE": 0.5212536213694167
+    },
+    {
+      "candidate": "META_P0.550_V0.15_A0",
+      "score_to_minimize": 0.9945235557660443,
+      "mean_relative_weighted_score": 0.9944198704304481,
+      "smape_worst_delta_pp": -0.12457984466806238,
+      "n_forward_folds": 5,
+      "mean_SMAPE": 60.6802266542112,
+      "mean_WAPE": 50.772501875166824,
+      "mean_RMSE": 2.686366201029715,
+      "mean_Bias": 77.03710141360261,
+      "mean_RMSLE": 0.521334960470433
+    },
+    {
+      "candidate": "META_P0.550_V0.30_A7",
+      "score_to_minimize": 0.9947576496716936,
+      "mean_relative_weighted_score": 0.9946194717348851,
+      "smape_worst_delta_pp": -0.14515120102287682,
+      "n_forward_folds": 5,
+      "mean_SMAPE": 60.645772802875605,
+      "mean_WAPE": 50.73595827635314,
+      "mean_RMSE": 2.6929672405534006,
+      "mean_Bias": 77.24597703960974,
+      "mean_RMSLE": 0.5216802398572407
+    },
+    {
+      "candidate": "META_P0.550_V0.30_A0",
+      "score_to_minimize": 0.9948845893896547,
+      "mean_relative_weighted_score": 0.994745783476829,
+      "smape_worst_delta_pp": -0.14653161882825572,
+      "n_forward_folds": 5,
+      "mean_SMAPE": 60.63518221290438,
+      "mean_WAPE": 50.755577317726285,
+      "mean_RMSE": 2.6925136938484395,
+      "mean_Bias": 77.35534223820473,
+      "mean_RMSLE": 0.521874091712778
+    },
+    {
+      "candidate": "META_P0.550_V0.00_A0",
+      "score_to_minimize": 0.995450500313872,
+      "mean_relative_weighted_score": 0.9953702279024654,
+      "smape_worst_delta_pp": -0.09653345100399235,
+      "n_forward_folds": 5,
+      "mean_SMAPE": 60.73124960358035,
+      "mean_WAPE": 50.870120119428506,
+      "mean_RMSE": 2.694326614304792,
+      "mean_Bias": 76.7849069471879,
+      "mean_RMSLE": 0.5210516889843402
+    }
+  ],
+  "outputs": [
+    {
+      "name": "winner",
+      "candidate": "META_P0.550_V0.15_A7",
+      "filename": "submission_v74_selected.csv",
+      "rows": 79101,
+      "predicted_total": 226144.37449409952,
+      "zero_pct": 56.38993185926853
+    },
+    {
+      "name": "baseline",
+      "candidate": "BASE_FULL",
+      "filename": "submission_v7_FULL_control.csv",
+      "rows": 79101,
+      "predicted_total": 226859.9441127777,
+      "zero_pct": 58.08144018406847
+    }
+  ],
+  "no_hidden_labels_warning": "Hidden contest outcomes cannot be computed from supplied historical data"
+}

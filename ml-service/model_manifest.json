@@ -1,0 +1,97 @@
+{
+  "release": "7.4.0",
+  "name": "Nonton 7.4 FULL history + META",
+  "created_on": "2026-10-29",
+  "training_cutoff": "2026-07-26",
+  "forecast_week_starts": [
+    "2026-07-27",
+    "2026-08-03",
+    "2026-08-10",
+    "2026-08-17",
+    "2026-08-24",
+    "2026-08-31",
+    "2026-09-07",
+    "2026-09-14",
+    "2026-09-21"
+  ],
+  "model_count": 41,
+  "base_model_count": 39,
+  "meta_model_count": 2,
+  "snapshot": "snapshots/weekly_history_2026-07-26.npz",
+  "training_modes": {
+    "max_origins": 0,
+    "rounds": 240,
+    "max_groups": 24
+  },
+  "source_data_not_included": "hakaton.zip",
+  "supported_inference": "Frozen 9-week contest horizon only",
+  "variants": {
+    "selected": {
+      "probability_threshold": 0.55,
+      "conditional_blend": 0.15,
+      "min_active_weeks_last13": 7
+    },
+    "conservative": {
+      "probability_threshold": 0.575,
+      "conditional_blend": 0.0,
+      "min_active_weeks_last13": 0
+    },
+    "baseline": null,
+    "smape_experimental": {
+      "probability_threshold": 0.55,
+      "conditional_blend": 0.3,
+      "min_active_weeks_last13": 7
+    }
+  },
+  "artifact_sha256": {
+    "models/base/global_poisson.txt": "acbc0f91b16c7c9a241ec938bdac3258dbda524f58645ed75ad6a8023ff4e12c",
+    "models/base/global_tweedie.txt": "3aeb8c233ef9d6fcaba285117de3526ce63de26a587d8d632572cf63470bcbcf",
+    "models/base/recursive_poisson.txt": "ee3fc386fdbf10d37b349a57c79378cee530dc6fd732783aae286fc2b5273b35",
+    "models/base/recursive_tweedie.txt": "ff45176f13074a09702a2cdce4ad1702171385ed0983bef2217ad7f545219842",
+    "models/base/warehouse__0.txt": "b340a62b60f72b2cab70b7b826087d076c8c0652335cfccdd6f4b9fbbbe5ee44",
+    "models/base/warehouse__1.txt": "1b7f6d1730867afe314349856e4e2794d2b682982613f89bdf5b98ca06c64387",
+    "models/base/warehouse__10.txt": "9b81c733ff2ebcc3cbe4cf4b88460680150449b2914e59eb92635764d53dd2a2",
+    "models/base/warehouse__2.txt": "192ee9303965f9664538091828ca241c01c2da092e6f77cb052a30ea00339035",
+    "models/base/warehouse__3.txt": "387d1aa17ee7ad3cd41705c4ce82d55c82a614f01bd7fecd31795777542dea46",
+    "models/base/warehouse__4.txt": "f477c0ba70d1fc19d4fd32b645c659f20ed5472a755dff49d1563ec33931cdea",
+    "models/base/warehouse__5.txt": "874f99694e42379a421b1283df42d4e3305953138a72b050a2897a060634a35f",
+    "models/base/warehouse__6.txt": "6459d1559426ef8ceaf9fc8ec59895071db0a059adb675f8c5b9dd40677b8bc3",
+    "models/base/warehouse__7.txt": "281156c4235169eafa7d4f6834b4ce12b5a97834dfa624e55c6626489b7ffbcf",
+    "models/base/warehouse__8.txt": "f9f7a9500c3c35f2f174bc0987bd43469cfbf40a077292455d43d8b86287d9df",
+    "models/base/warehouse__9.txt": "3a848f90256697cfdd741884a5bab7f8d792705a8a51079173c45086658f8c5b",
+    "models/base/whcat1__0_8.txt": "517cd8573cdbe14ad3f043ff18cf979ed98bb9f4833b5d7510d3a762d4e01e83",
+    "models/base/whcat1__0_9.txt": "84c6b20a23e7f313ec86551d0ed3eef77250e56328a50d8bdc96f8c1f9423aea",
+    "models/base/whcat1__10_8.txt": "82f525f816ef9b0735dae9fc2fd7dd8ca496ca0badf29210502614830835852b",
+    "models/base/whcat1__10_9.txt": "ce5650229accdcd4510bb96fb944b0deddd1f1d64f492ba86759104ecf56b566",
+    "models/base/whcat1__1_8.txt": "d694c3086a0e523699ef498fcfd319cc1318dbb9839ad0d124e0beea8a85d372",
+    "models/base/whcat1__1_9.txt": "f09ecfffdadf1514cb4ef48a07939b7c659d36b027ce1e140864f49e6352e61d",
+    "models/base/whcat1__2_8.txt": "b608a608d4c490fe022907178df6050123ca6c33b1676c9dd95291e9d25a2756",
+    "models/base/whcat1__2_9.txt": "dadb6a3227f391da563041f55822d3fb7432ccb020affe8ad75376ccd5f2a226",
+    "models/base/whcat1__3_2.txt": "e50b8675001c6fc8c7d4ccca5ad8a642ee2c5ff7408e44459b50b83e9f1d6dcf",
+    "models/base/whcat1__3_8.txt": "6dc4b8ca21d02b5bee803ccc956ab1c82ae5b456a3703424a7f064578cf05109",
+    "models/base/whcat1__3_9.txt": "120417f1c8318c5f0d09a9c64282aa3e94b9332883438b7c222855ad55080f66",
+    "models/base/whcat1__4_2.txt": "5821a8d287a39a641fdb938f35dd144405daebc913b3edb894c95c94b20263e0",
+    "models/base/whcat1__4_8.txt": "19d9de21b7619dcf67ad7808f8249499fc8ad53cf5b326c02f95aa90790d67d7",
+    "models/base/whcat1__4_9.txt": "c0b6ad53db5f88970405e8da8384118064bd21243dca8e00ee1d6b01adabe01b",
+    "models/base/whcat1__5_8.txt": "d36997f4a40031d12b9b24ef4fdcf9bcce4ead99f68780a2991e78366daf526c",
+    "models/base/whcat1__5_9.txt": "a97fb9ac81db17da68271c1c0cb1a1a01c2dfab6be0a20d14ba6676c0be88b5a",
+    "models/base/whcat1__6_8.txt": "5b1b571203fd6bbe954b30897d859647858722caa8b8fdd78e0ffed7553df891",
+    "models/base/whcat1__6_9.txt": "442557034a389ac26f22389b340ceb47a67302d4bdaf022767871a60b0a565d2",
+    "models/base/whcat1__7_8.txt": "0862db7adf0236aa9d3608cf1d96a3d7f9ab162b0d55d4f35b64b972b1221188",
+    "models/base/whcat1__7_9.txt": "1d22166ca0d1e01699f49352f0487101d6f67fd15dd9d758d61cb8ae3c2ed6ca",
+    "models/base/whcat1__8_8.txt": "338a486530aa318382eb582033657929a33e9900ccb68486bc92e35926c65e1c",
+    "models/base/whcat1__8_9.txt": "1b76180474d6dbc06ff13a9060072e93f91573f1a1f279b20f45cb161d816b43",
+    "models/base/whcat1__9_8.txt": "38fb114dfc6a0d7625cfbb632ad31ade2af4a1e4a5543159a7432693d3c87ab0",
+    "models/base/whcat1__9_9.txt": "f6a52372cbbe0906ad1e4366e7f6b4c5c383d1ad7b7f70651af8a42cd2b4f2db",
+    "models/meta_conditional_quantity.txt": "f26852d4190871915eebdbd71d6ca9248b8af99ba5aa784819cec775ef56d48b",
+    "models/meta_sale_probability.txt": "cd34b2c4e276f048f9ecd7a2d416ba1ffdb10a987ccb99cb84fdbd48153999dd",
+    "models/base/schema.json": "f46e74c4eb01774f8555cd36357b8c242d1c4b159c10f0d9c8a9b68d9ab4a273",
+    "snapshots/weekly_history_2026-07-26.npz": "0d29623ee6690d8ad295deb1228c183eff3eaded8a1ba4ec4e9d3402a0ce3f4c"
+  },
+  "forecast_sha256": {
+    "forecasts/baseline.csv": "a33fcff53abd38ae699becc2d20a27464009071b975bb8d40256fbcc0dbebdb9",
+    "forecasts/conservative.csv": "627d2f28e145b3ca8ca60b1fdbf5dbc0fa435abb6a08402a699a9c153b76b122",
+    "forecasts/selected.csv": "b3964a5cb74741763e55482aed347badc5108d481bfe564f38c37c626d494465",
+    "forecasts/smape_experimental.csv": "183a5c62c76457f0e43be4d8c9541d52567556cc7fd7e3a76b07e3e6851b464d"
+  }
+}

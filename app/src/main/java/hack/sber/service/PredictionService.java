@@ -16,6 +16,8 @@ import java.time.LocalDate;
 @Service
 public class PredictionService {
 
+    private static final long MODEL_HISTORY_WEEKS = 52;
+
     private final DatasetRepository repository;
     private final CsvValidationService validator;
 
@@ -59,13 +61,27 @@ public class PredictionService {
         stock.transferTo(stockPath);
 
         try {
-            LocalDate lastDate = validator.validateSales(salesPath);
-            validator.validateStock(stockPath);
+            LocalDate lastSalesDate = validator.validateSales(salesPath);
+            LocalDate lastStockDate = validator.validateStock(stockPath);
+
+            LocalDate sharedLastDate = lastSalesDate.isBefore(lastStockDate)
+                    ? lastSalesDate
+                    : lastStockDate;
+            LocalDate completeSunday = sharedLastDate.minusDays(
+                    sharedLastDate.getDayOfWeek().getValue() % 7L);
+            LocalDate historyStart = completeSunday
+                    .minusWeeks(MODEL_HISTORY_WEEKS)
+                    .plusDays(1);
+
+            validator.retainDateRange(
+                    salesPath, historyStart, sharedLastDate, "sales");
+            validator.retainDateRange(
+                    stockPath, historyStart, sharedLastDate, "stock");
 
             return repository.save(new DatasetRecord(
                     salesPath.toString(),
                     stockPath.toString(),
-                    lastDate
+                    completeSunday
             ));
         } catch (IOException | RuntimeException e) {
             Files.deleteIfExists(salesPath);
@@ -81,6 +97,19 @@ public class PredictionService {
                         HttpStatus.NOT_FOUND,
                         "Сначала загрузите файлы через POST /predict"
                 ));
+    }
+
+    public void delete(DatasetRecord dataset) {
+        repository.delete(dataset);
+        Path salesPath = getSalesPath(dataset);
+        Path stockPath = getStockPath(dataset);
+        try {
+            Files.deleteIfExists(salesPath);
+            Files.deleteIfExists(stockPath);
+            Files.deleteIfExists(salesPath.getParent());
+        } catch (IOException ignored) {
+            // Запись в БД уже удалена; оставшиеся файлы можно очистить позднее.
+        }
     }
 
     public Path getSalesPath(DatasetRecord dataset) {

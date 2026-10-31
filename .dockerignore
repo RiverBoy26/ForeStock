@@ -1,0 +1,11 @@
+.git
+.idea
+.m2
+**/target
+**/build
+**/.gradle
+**/__pycache__
+**/*.pyc
+forecast-data
+uploads
+ml-service

@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ForeStock — аналитика продаж и спроса</title>
+
+    <style>
+        :root {
+            --bg: #000000;
+            --surface: #171717;
+            --surface-light: #242424;
+            --orange: #F27E24;
+            --orange-hover: #ff913d;
+            --text: #ffffff;
+            --muted: #a0a0a0;
+            --border: #383838;
+            --success: #8ff0b0;
+            --danger: #ffaaaa;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Шапка */
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: #21160e;
+            border: 1px solid #59331a;
+            border-radius: 14px;
+            color: var(--orange);
+            font-size: 27px;
+        }
+
+        .logo-text h1 {
+            margin: 0;
+            color: var(--orange);
+            font-size: 25px;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text p {
+            margin: 5px 0 0;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 4px;
+            padding: 5px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+
+        .nav-btn {
+            padding: 11px 16px;
+            border: none;
+            border-radius: 11px;
+            background: transparent;
+            color: #bdbdbd;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: background 0.2s, color 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-btn:hover {
+            color: var(--text);
+            background: #303030;
+        }
+
+        .nav-btn.active {
+            color: #111;
+            background: var(--orange);
+        }
+
+        /* Экраны */
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-heading {
+            margin-bottom: 24px;
+        }
+
+        .page-heading h2 {
+            margin: 0 0 8px;
+            font-size: 27px;
+        }
+
+        .page-heading p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Сообщения сервера */
+
+        .notice {
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .notice.success {
+            background: #142b1e;
+            border: 1px solid #28583a;
+            color: var(--success);
+        }
+
+        .notice.error {
+            background: #301818;
+            border: 1px solid #683030;
+            color: var(--danger);
+        }
+
+        /* Статистика */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .stat-box {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .stat-value {
+            color: var(--text);
+            font-size: 29px;
+            font-weight: bold;
+        }
+
+        .stat-value.accent {
+            color: var(--orange);
+        }
+
+        /* График */
+
+        .chart-container {
+            padding: 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .chart-header h3 {
+            margin: 0 0 6px;
+            font-size: 17px;
+        }
+
+        .chart-header p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .chart-placeholder {
+            min-height: 230px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 24px;
+            border: 1px dashed #444;
+            border-radius: 14px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .chart-placeholder .chart-icon {
+            font-size: 36px;
+            color: var(--orange);
+        }
+
+        .chart-placeholder strong {
+            color: #ddd;
+            font-size: 15px;
+        }
+
+        .chart-placeholder span {
+            max-width: 320px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        /* Фильтры */
+
+        .top-filters {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .filter-card {
+            padding: 16px 18px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+        }
+
+        .filter-card span {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .filter-card strong {
+            font-size: 19px;
+        }
+
+        /* Загрузка CSV */
+
+        .upload-container {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .upload-card {
+            min-width: 0;
+            padding: 26px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: var(--surface);
+            border: 1px solid #69401f;
+            border-radius: 18px;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .upload-card:hover {
+            border-color: var(--orange);
+            transform: translateY(-2px);
+        }
+
+        .upload-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 62px;
+            height: 62px;
+            margin-bottom: 18px;
+            background: #2b1c12;
+            border-radius: 18px;
+            font-size: 30px;
+        }
+
+        .upload-title {
+            margin-bottom: 10px;
+            font-size: 17px;
+            font-weight: bold;
+            line-height: 1.5;
+        }
+
+        .upload-description {
+            min-height: 42px;
+            margin-bottom: 22px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .upload-form {
+            width: 100%;
+        }
+
+        .upload-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 46px;
+            padding: 12px 16px;
+            background: var(--orange);
+            border: none;
+            border-radius: 12px;
+            color: #111;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            line-height: 1.4;
+            transition: background 0.2s;
+        }
+
+        .upload-btn:hover {
+            background: var(--orange-hover);
+        }
+
+        .upload-btn:focus-visible,
+        .nav-btn:focus-visible {
+            outline: 2px solid white;
+            outline-offset: 3px;
+        }
+
+        .file-input:disabled + .upload-btn,
+        .submit-forecast-btn:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .file-input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .file-input:focus-visible + .upload-btn {
+            outline: 2px solid white;
+            outline-offset: 3px;
+        }
+
+        .file-name {
+            width: 100%;
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .submit-forecast-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: min(100%, 420px);
+            min-height: 52px;
+            margin: 24px auto 0;
+            padding: 14px 20px;
+            background: var(--orange);
+            border: none;
+            border-radius: 12px;
+            color: #111;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .submit-forecast-btn:hover:not(:disabled) {
+            background: var(--orange-hover);
+        }
+
+        .form-status {
+            min-height: 22px;
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .form-status.error {
+            color: var(--danger);
+        }
+
+        .form-status.success {
+            color: var(--success);
+        }
+
+        .forecast-period {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+
+        .forecast-period h3 {
+            margin: 0 0 7px;
+            font-size: 16px;
+        }
+
+        .forecast-period > p {
+            margin: 0 0 16px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .period-fields {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .period-field label {
+            display: block;
+            margin-bottom: 8px;
+            color: #d5d5d5;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .period-field select {
+            width: 100%;
+            min-height: 44px;
+            padding: 10px 12px;
+            color: var(--text);
+            background: var(--surface-light);
+            border: 1px solid #4a4a4a;
+            border-radius: 10px;
+        }
+
+        .period-field select:focus-visible {
+            outline: 2px solid var(--orange);
+            outline-offset: 2px;
+        }
+
+        /* Настройки */
+
+        .settings-card {
+            padding: 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+
+        .settings-card h3 {
+            margin: 0 0 10px;
+            font-size: 16px;
+        }
+
+        .settings-card p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .status-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding: 8px 12px;
+            background: #242424;
+            border-radius: 20px;
+            color: #c8c8c8;
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            background: var(--orange);
+            border-radius: 50%;
+        }
+
+        /* Нижняя часть */
+
+        .footer {
+            margin-top: 36px;
+            padding-top: 18px;
+            border-top: 1px solid #252525;
+            color: #777;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        /* Планшеты и телефоны */
+
+        @media (max-width: 768px) {
+            body {
+                padding: 18px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 20px;
+                margin-bottom: 26px;
+            }
+
+            .logo-area {
+                justify-content: center;
+            }
+
+            .nav-tabs {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .nav-btn {
+                flex: 1;
+                padding: 12px 6px;
+                font-size: 12px;
+                white-space: normal;
+            }
+
+            .upload-container {
+                grid-template-columns: 1fr;
+            }
+
+            .upload-card {
+                width: 100%;
+            }
+
+            .period-fields {
+                grid-template-columns: 1fr;
+            }
+
+            .page-heading h2 {
+                font-size: 24px;
+            }
+
+            .stat-box {
+                padding: 16px;
+            }
+
+            .stat-value {
+                font-size: 25px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            body {
+                padding: 14px;
+            }
+
+            .logo-text h1 {
+                font-size: 23px;
+            }
+
+            .nav-btn {
+                font-size: 11px;
+                padding: 11px 4px;
+            }
+
+            .stats-grid,
+            .top-filters {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                padding: 16px;
+            }
+
+            .upload-card {
+                padding: 22px 18px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <!-- Шапка -->
+    <header class="header">
+        <div class="logo-area">
+            <div class="logo-icon" aria-hidden="true">↗</div>
+
+            <div class="logo-text">
+                <h1>ForeStock</h1>
+                <p>Аналитика продаж и спроса</p>
+            </div>
+        </div>
+
+        <nav class="nav-tabs" aria-label="Главная навигация">
+            <button type="button"
+                    class="nav-btn active"
+                    data-tab="forecasts"
+                    aria-controls="screen-forecasts"
+                    aria-selected="true">
+                Прогнозы
+            </button>
+
+            <button type="button"
+                    class="nav-btn"
+                    data-tab="new"
+                    aria-controls="screen-new"
+                    aria-selected="false">
+                Новый прогноз
+            </button>
+
+            <button type="button"
+                    class="nav-btn"
+                    data-tab="settings"
+                    aria-controls="screen-settings"
+                    aria-selected="false">
+                Настройки
+            </button>
+        </nav>
+    </header>
+
+    <!-- Сообщения от Spring Boot -->
+    <div th:if="${message}"
+         class="notice success"
+         role="status"
+         th:text="${message}">
+        Файл успешно загружен.
+    </div>
+
+    <div th:if="${error}"
+         class="notice error"
+         role="alert"
+         th:text="${error}">
+        Произошла ошибка.
+    </div>
+
+    <!-- ЭКРАН 1: ПРОГНОЗЫ -->
+    <main>
+        <section id="screen-forecasts"
+                 class="screen active"
+                 aria-labelledby="forecasts-title">
+
+            <div class="page-heading">
+                <h2 id="forecasts-title">Обзор прогнозов</h2>
+                <p>
+                    Контролируйте продажи, складские остатки
+                    и будущий спрос.
+                </p>
+            </div>
+
+            <div class="top-filters">
+                <div class="filter-card">
+                    <span>Всего прогнозов</span>
+                    <strong th:text="${totalForecasts != null
+                        ? totalForecasts : 0}">0</strong>
+                </div>
+
+                <div class="filter-card">
+                    <span>Последний расчёт</span>
+                    <strong th:text="${lastCalculation != null
+                        ? lastCalculation : 'Нет данных'}">
+                        Нет данных
+                    </strong>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-label">
+                        Изначально артикулов
+                    </span>
+                    <strong class="stat-value accent"
+                            th:text="${articleCount != null
+                                ? articleCount : 0}">0</strong>
+                </div>
+
+                <div class="stat-box">
+                    <span class="stat-label">
+                        Количество складов
+                    </span>
+                    <strong class="stat-value"
+                            th:text="${warehouseCount != null
+                                ? warehouseCount : 0}">0</strong>
+                </div>
+
+                <div class="stat-box">
+                    <span class="stat-label">
+                        Продано единиц за период
+                    </span>
+                    <strong class="stat-value"
+                            th:text="${soldUnits != null
+                                ? soldUnits : 0}">0</strong>
+                </div>
+
+                <div class="stat-box">
+                    <span class="stat-label">
+                        Товара под конец периода
+                    </span>
+                    <strong class="stat-value"
+                            th:text="${endingStock != null
+                                ? endingStock : 0}">0</strong>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div>
+                        <h3>Динамика спроса</h3>
+                        <p>
+                            Исторические продажи и прогнозируемые значения
+                        </p>
+                    </div>
+                </div>
+
+                <div class="chart-placeholder">
+                    <div class="chart-icon" aria-hidden="true">⌁</div>
+                    <strong>График пока недоступен</strong>
+                    <span>
+                        Загрузите файлы продаж и остатков,
+                        а затем выполните расчёт, чтобы увидеть
+                        динамику спроса.
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ЭКРАН 2: НОВЫЙ ПРОГНОЗ -->
+        <section id="screen-new"
+                 class="screen"
+                 aria-labelledby="new-title">
+
+            <div class="page-heading">
+                <h2 id="new-title">Новый прогноз</h2>
+                <p>
+                    Загрузите исходные CSV-файлы для подготовки
+                    прогноза продаж и складских остатков.
+                </p>
+            </div>
+
+            <form action="/predict"
+                  method="post"
+                  enctype="multipart/form-data"
+                  class="upload-form"
+                  id="forecast-form">
+
+                <div class="upload-container">
+
+                <!-- Файл продаж -->
+                <article class="upload-card">
+                    <div class="upload-icon" aria-hidden="true">
+                        📄
+                    </div>
+
+                    <div class="upload-title">
+                        Файл продаж
+                    </div>
+
+                    <p class="upload-description">
+                        История продаж по артикулам и датам
+                        в формате CSV.
+                    </p>
+
+                    <input type="file"
+                           id="file-sales"
+                           name="sales"
+                           class="file-input"
+                           accept=".csv,text/csv"
+                           aria-label="Выбрать CSV-файл продаж"
+                           required>
+
+                    <label for="file-sales" class="upload-btn">
+                        Выбрать CSV с продажами
+                    </label>
+
+                    <div class="file-name"
+                         id="name-sales"
+                         aria-live="polite">
+                        Файл не выбран
+                    </div>
+                </article>
+
+                <!-- Файл складских остатков -->
+                <article class="upload-card">
+                    <div class="upload-icon" aria-hidden="true">
+                        🏭
+                    </div>
+
+                    <div class="upload-title">
+                        Файл складских остатков
+                    </div>
+
+                    <p class="upload-description">
+                        Информация о текущих остатках товаров
+                        на складах в формате CSV.
+                    </p>
+
+                    <input type="file"
+                           id="file-stocks"
+                           name="stock"
+                           class="file-input"
+                           accept=".csv,text/csv"
+                           aria-label="Выбрать CSV-файл остатков"
+                           required>
+
+                    <label for="file-stocks" class="upload-btn">
+                        Выбрать CSV с остатками
+                    </label>
+
+                    <div class="file-name"
+                         id="name-stocks"
+                         aria-live="polite">
+                        Файл не выбран
+                    </div>
+                </article>
+
+                </div>
+
+                <section class="forecast-period" aria-labelledby="forecast-period-title">
+                    <h3 id="forecast-period-title">Период прогноза</h3>
+                    <p>
+                        Выберите непрерывный промежуток внутри доступного горизонта
+                        модели. Одна неделя — семь дней, начиная с понедельника.
+                    </p>
+
+                    <div class="period-fields">
+                        <div class="period-field">
+                            <label for="start-week">Начальная неделя</label>
+                            <select id="start-week" name="start_week">
+                                <option value="1" selected>1-я неделя</option>
+                                <option value="2">2-я неделя</option>
+                                <option value="3">3-я неделя</option>
+                                <option value="4">4-я неделя</option>
+                                <option value="5">5-я неделя</option>
+                                <option value="6">6-я неделя</option>
+                                <option value="7">7-я неделя</option>
+                                <option value="8">8-я неделя</option>
+                                <option value="9">9-я неделя</option>
+                            </select>
+                        </div>
+
+                        <div class="period-field">
+                            <label for="end-week">Конечная неделя</label>
+                            <select id="end-week" name="end_week">
+                                <option value="1">1-я неделя</option>
+                                <option value="2">2-я неделя</option>
+                                <option value="3">3-я неделя</option>
+                                <option value="4">4-я неделя</option>
+                                <option value="5">5-я неделя</option>
+                                <option value="6">6-я неделя</option>
+                                <option value="7">7-я неделя</option>
+                                <option value="8">8-я неделя</option>
+                                <option value="9" selected>9-я неделя</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <button type="submit"
+                        class="submit-forecast-btn"
+                        id="forecast-submit">
+                    Рассчитать и скачать прогноз
+                </button>
+
+                <div class="form-status"
+                     id="forecast-status"
+                     role="status"
+                     aria-live="polite"></div>
+            </form>
+        </section>
+
+        <!-- ЭКРАН 3: НАСТРОЙКИ -->
+        <section id="screen-settings"
+                 class="screen"
+                 aria-labelledby="settings-title">
+
+            <div class="page-heading">
+                <h2 id="settings-title">Настройки</h2>
+                <p>
+                    Конфигурация системы прогнозирования ForeStock.
+                </p>
+            </div>
+
+            <div class="settings-card">
+                <h3>Модуль прогнозирования</h3>
+
+                <p>
+                    Прогноз выполняется Python-сервисом Nonton v7.4
+                    с зафиксированными весами модели и динамическими
+                    признаками из загруженных CSV-файлов.
+                </p>
+
+                <div class="status-label">
+                    <span class="status-dot"></span>
+                    Модель Nonton v7.4 подключена
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        ForeStock · Аналитика продаж и спроса
+    </footer>
+
+</div>
+
+<script>
+    // Переключение вкладок
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const screens = document.querySelectorAll('.screen');
+
+    navButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const tabName = button.dataset.tab;
+            const targetScreen =
+                document.getElementById('screen-' + tabName);
+
+            if (!targetScreen) {
+                return;
+            }
+
+            screens.forEach(screen => {
+                screen.classList.remove('active');
+            });
+
+            navButtons.forEach(navButton => {
+                navButton.classList.remove('active');
+                navButton.setAttribute('aria-selected', 'false');
+            });
+
+            targetScreen.classList.add('active');
+            button.classList.add('active');
+            button.setAttribute('aria-selected', 'true');
+        });
+    });
+
+    // Отображение и локальная проверка выбранных файлов.
+    function setupFileUpload(inputId, nameId) {
+        const input = document.getElementById(inputId);
+        const nameDiv = document.getElementById(nameId);
+
+        if (!input || !nameDiv) {
+            return;
+        }
+
+        input.addEventListener('change', () => {
+            const file = input.files && input.files[0];
+
+            if (!file) {
+                nameDiv.textContent = 'Файл не выбран';
+                return;
+            }
+
+            // Проверка расширения на стороне браузера.
+            // Backend также обязан проверять файл.
+            if (!file.name.toLowerCase().endsWith('.csv')) {
+                nameDiv.textContent =
+                    'Ошибка: выберите файл с расширением .csv';
+
+                input.value = '';
+                return;
+            }
+
+            const maxSize = 500 * 1024 * 1024;
+
+            if (file.size > maxSize) {
+                nameDiv.textContent =
+                    'Ошибка: максимальный размер файла — 500 МБ';
+
+                input.value = '';
+                return;
+            }
+
+            nameDiv.textContent = file.name;
+        });
+    }
+
+    setupFileUpload('file-sales', 'name-sales');
+    setupFileUpload('file-stocks', 'name-stocks');
+
+    const forecastForm = document.getElementById('forecast-form');
+    const forecastSubmit = document.getElementById('forecast-submit');
+    const forecastStatus = document.getElementById('forecast-status');
+    const startWeekSelect = document.getElementById('start-week');
+    const endWeekSelect = document.getElementById('end-week');
+    const forecastInputs = forecastForm
+        ? forecastForm.querySelectorAll('input[type="file"]')
+        : [];
+
+    function setForecastStatus(message, type = '') {
+        forecastStatus.textContent = message;
+        forecastStatus.className = 'form-status' + (type ? ' ' + type : '');
+    }
+
+    function syncForecastPeriod() {
+        if (!startWeekSelect || !endWeekSelect) {
+            return;
+        }
+
+        const startWeek = Number(startWeekSelect.value);
+        Array.from(endWeekSelect.options).forEach(option => {
+            option.disabled = Number(option.value) < startWeek;
+        });
+
+        if (Number(endWeekSelect.value) < startWeek) {
+            endWeekSelect.value = String(startWeek);
+        }
+    }
+
+    if (startWeekSelect && endWeekSelect) {
+        startWeekSelect.addEventListener('change', syncForecastPeriod);
+        syncForecastPeriod();
+    }
+
+    function responseFilename(response) {
+        const disposition = response.headers.get('Content-Disposition') || '';
+        const utfMatch = disposition.match(/filename\*=UTF-8''([^;]+)/i);
+        const plainMatch = disposition.match(/filename="?([^";]+)"?/i);
+
+        if (utfMatch) {
+            return decodeURIComponent(utfMatch[1]);
+        }
+
+        return plainMatch ? plainMatch[1] : 'forecast.csv';
+    }
+
+    if (forecastForm) {
+        forecastForm.addEventListener('submit', async event => {
+            event.preventDefault();
+
+            if (!forecastForm.checkValidity()) {
+                forecastForm.reportValidity();
+                return;
+            }
+
+            if (Number(startWeekSelect.value) > Number(endWeekSelect.value)) {
+                setForecastStatus(
+                    'Начальная неделя не может быть позже конечной.',
+                    'error'
+                );
+                return;
+            }
+
+            const formData = new FormData(forecastForm);
+
+            forecastSubmit.disabled = true;
+            forecastInputs.forEach(input => input.disabled = true);
+            setForecastStatus('Файлы отправлены. Выполняется расчёт прогноза…');
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || 'Сервис прогнозирования вернул ошибку.');
+                }
+
+                const forecast = await response.blob();
+                if (forecast.size === 0) {
+                    throw new Error('Сервис не вернул файл прогноза.');
+                }
+
+                const downloadUrl = URL.createObjectURL(forecast);
+                const downloadLink = document.createElement('a');
+                downloadLink.href = downloadUrl;
+                downloadLink.download = responseFilename(response);
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                downloadLink.remove();
+                URL.revokeObjectURL(downloadUrl);
+
+                setForecastStatus('Прогноз готов и скачан.', 'success');
+            } catch (error) {
+                let message = error.message || 'Не удалось выполнить прогноз.';
+
+                try {
+                    const parsed = JSON.parse(message);
+                    message = parsed.message || parsed.error || message;
+                } catch (ignored) {
+                    // Ответ уже содержит обычный текст.
+                }
+
+                setForecastStatus(message, 'error');
+            } finally {
+                forecastSubmit.disabled = false;
+                forecastInputs.forEach(input => input.disabled = false);
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
