@@ -16,11 +16,17 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 @Service
 public class CsvValidationService {
+
+    private static final int MAX_REPORTED_ROWS = 10;
 
     private static final Set<String> SALES_COLUMNS = Set.of(
             "date", "composite_division", "cities_name",
@@ -31,9 +37,7 @@ public class CsvValidationService {
     );
 
     private static final Set<String> STOCK_COLUMNS = Set.of(
-            "date", "warehouse_name",
-            "article",//"char_article",//НАДО ПРОВЕРИТЬ ИМЯ СТОЛБЦА
-            "stock"
+            "date", "warehouse_name", "article", "stock"
     );
 
     public LocalDate validateSales(Path file) throws IOException {
@@ -73,7 +77,6 @@ public class CsvValidationService {
 
         LocalDate first = dates.first();
         LocalDate last = dates.last();
-
         long days = last.toEpochDay() - first.toEpochDay() + 1;
 
         if (days < 364) {
@@ -136,6 +139,7 @@ public class CsvValidationService {
         Path temporary = Files.createTempFile(
                 file.getParent(), fileName + "-window-", ".csv");
         long retainedRows = 0;
+        Map<String, List<Long>> invalidRows = new LinkedHashMap<>();
 
         try (Reader reader = Files.newBufferedReader(
                 file, StandardCharsets.UTF_8);
@@ -155,7 +159,9 @@ public class CsvValidationService {
                 LocalDate date = LocalDate.parse(row.get("date"));
                 if (!date.isBefore(startInclusive)
                         && !date.isAfter(endInclusive)) {
-                    printer.printRecord(row);
+                    List<String> normalized = normalizeNumericValues(
+                            row, fileName, invalidRows);
+                    printer.printRecord(normalized);
                     retainedRows++;
                 }
             }
@@ -173,7 +179,106 @@ public class CsvValidationService {
             );
         }
 
+        if (!invalidRows.isEmpty()) {
+            Files.deleteIfExists(temporary);
+            throw new ResponseStatusException(
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    numericValidationMessage(fileName, invalidRows)
+            );
+        }
+
         Files.move(temporary, file, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    private List<String> normalizeNumericValues(
+            CSVRecord row,
+            String fileName,
+            Map<String, List<Long>> invalidRows
+    ) {
+        List<String> values = new ArrayList<>();
+        row.forEach(values::add);
+        while (values.size() < row.getParser().getHeaderNames().size()) {
+            values.add("");
+        }
+        long csvLine = row.getRecordNumber() + 1;
+
+        if ("sales".equals(fileName)) {
+            validateNumber(row, "quantity", csvLine,
+                    invalidRows, true);
+            validateNumber(row, "sales_sum", csvLine,
+                    invalidRows, false);
+
+            String discount = value(row, "discount_sum");
+            if (discount == null || discount.isBlank()) {
+                int columnIndex = row.getParser()
+                        .getHeaderMap()
+                        .get("discount_sum");
+                values.set(columnIndex, "0");
+            } else {
+                validateNumber(row, "discount_sum", csvLine,
+                        invalidRows, false);
+            }
+        } else if ("stock".equals(fileName)) {
+            validateNumber(row, "stock", csvLine,
+                    invalidRows, false);
+        }
+
+        return values;
+    }
+
+    private void validateNumber(
+            CSVRecord row,
+            String column,
+            long csvLine,
+            Map<String, List<Long>> invalidRows,
+            boolean nonNegative
+    ) {
+        String value = value(row, column);
+        boolean valid = value != null && !value.isBlank();
+
+        if (valid) {
+            try {
+                double number = Double.parseDouble(value);
+                valid = Double.isFinite(number)
+                        && (!nonNegative || number >= 0);
+            } catch (NumberFormatException e) {
+                valid = false;
+            }
+        }
+
+        if (!valid) {
+            List<Long> rows = invalidRows.computeIfAbsent(
+                    column, ignored -> new ArrayList<>());
+            if (rows.size() < MAX_REPORTED_ROWS) {
+                rows.add(csvLine);
+            }
+        }
+    }
+
+    private String value(CSVRecord row, String column) {
+        return row.isSet(column) ? row.get(column) : null;
+    }
+
+    private String numericValidationMessage(
+            String fileName,
+            Map<String, List<Long>> invalidRows
+    ) {
+        StringBuilder message = new StringBuilder(
+                "В файле " + fileName
+                        + " найдены пустые или некорректные числовые значения: ");
+
+        boolean first = true;
+        for (Map.Entry<String, List<Long>> entry : invalidRows.entrySet()) {
+            if (!first) {
+                message.append("; ");
+            }
+            message.append(entry.getKey())
+                    .append(" — строки ")
+                    .append(entry.getValue());
+            first = false;
+        }
+
+        return message.toString();
     }
 
     private void validateColumns(

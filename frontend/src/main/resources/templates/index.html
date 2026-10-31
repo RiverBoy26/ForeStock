@@ -1156,7 +1156,8 @@
 
                 try {
                     const parsed = JSON.parse(message);
-                    message = parsed.message || parsed.error || message;
+                    message = parsed.detail || parsed.message ||
+                        parsed.error || message;
                 } catch (ignored) {
                     // Ответ уже содержит обычный текст.
                 }
