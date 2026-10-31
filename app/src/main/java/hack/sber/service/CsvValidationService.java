@@ -205,19 +205,10 @@ public class CsvValidationService {
         if ("sales".equals(fileName)) {
             validateNumber(row, "quantity", csvLine,
                     invalidRows, true);
-            validateNumber(row, "sales_sum", csvLine,
-                    invalidRows, false);
-
-            String discount = value(row, "discount_sum");
-            if (discount == null || discount.isBlank()) {
-                int columnIndex = row.getParser()
-                        .getHeaderMap()
-                        .get("discount_sum");
-                values.set(columnIndex, "0");
-            } else {
-                validateNumber(row, "discount_sum", csvLine,
-                        invalidRows, false);
-            }
+            validateOptionalNumber(row, "sales_sum", csvLine,
+                    invalidRows);
+            validateOptionalNumber(row, "discount_sum", csvLine,
+                    invalidRows);
         } else if ("stock".equals(fileName)) {
             validateNumber(row, "stock", csvLine,
                     invalidRows, false);
@@ -253,6 +244,20 @@ public class CsvValidationService {
                 rows.add(csvLine);
             }
         }
+    }
+
+    private void validateOptionalNumber(
+            CSVRecord row,
+            String column,
+            long csvLine,
+            Map<String, List<Long>> invalidRows
+    ) {
+        String value = value(row, column);
+        if (value == null || value.isBlank()
+                || "null".equalsIgnoreCase(value.trim())) {
+            return;
+        }
+        validateNumber(row, column, csvLine, invalidRows, false);
     }
 
     private String value(CSVRecord row, String column) {

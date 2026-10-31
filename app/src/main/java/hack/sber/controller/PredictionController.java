@@ -54,6 +54,7 @@ public class PredictionController {
                     variant,
                     startWeek,
                     endWeek,
+                    dataset.getCutoffDate(),
                     writer
             );
             return csvResponse(forecastFilename("forecast", startWeek, endWeek),
@@ -93,6 +94,7 @@ public class PredictionController {
                     variant,
                     startWeek,
                     endWeek,
+                    dataset.getCutoffDate(),
                     writer
             );
         } catch (java.io.IOException e) {
@@ -132,6 +134,7 @@ public class PredictionController {
                     variant,
                     startWeek,
                     endWeek,
+                    dataset.getCutoffDate(),
                     writer
             );
         } catch (java.io.IOException e) {

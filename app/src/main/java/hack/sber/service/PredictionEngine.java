@@ -3,6 +3,7 @@ package hack.sber.service;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Path;
+import java.time.LocalDate;
 
 public interface PredictionEngine {
 
@@ -14,6 +15,7 @@ public interface PredictionEngine {
             String variant,
             int startWeek,
             int endWeek,
+            LocalDate cutoffDate,
             Writer output
     ) throws IOException;
 
@@ -23,6 +25,7 @@ public interface PredictionEngine {
             String variant,
             int startWeek,
             int endWeek,
+            LocalDate cutoffDate,
             Writer output
     ) throws IOException;
 }

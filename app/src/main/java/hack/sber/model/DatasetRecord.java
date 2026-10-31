@@ -57,6 +57,10 @@ public class DatasetRecord {
         return lastSalesDate;
     }
 
+    public LocalDate getCutoffDate() {
+        return lastSalesDate;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }

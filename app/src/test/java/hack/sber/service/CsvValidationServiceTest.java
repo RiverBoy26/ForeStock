@@ -5,7 +5,6 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.Reader;
@@ -32,10 +31,10 @@ class CsvValidationServiceTest {
     Path temporaryDirectory;
 
     @Test
-    void replacesBlankDiscountWithZeroInsideRetainedWindow() throws Exception {
+    void preservesBlankAmountFieldsInsideRetainedWindow() throws Exception {
         Path file = write("sales.csv", SALES_HEADER + "\n"
                 + salesRow("2025-07-27", "1", "", "") + "\n"
-                + salesRow("2025-07-28", "1", "12.5", "") + "\n");
+                + salesRow("2025-07-28", "1", "", "") + "\n");
 
         service.retainDateRange(file,
                 LocalDate.parse("2025-07-28"),
@@ -50,26 +49,30 @@ class CsvValidationServiceTest {
                      .parse(reader)) {
             CSVRecord row = parser.iterator().next();
             assertEquals("2025-07-28", row.get("date"));
-            assertEquals("0", row.get("discount_sum"));
+            assertEquals("", row.get("sales_sum"));
+            assertEquals("", row.get("discount_sum"));
         }
     }
 
     @Test
-    void reportsBlankSalesSumWithOriginalCsvLine() throws Exception {
+    void acceptsBlankSalesSumAndPreservesItForModelMissingness() throws Exception {
         Path file = write("sales.csv", SALES_HEADER + "\n"
                 + salesRow("2025-07-28", "1", "12.5", "0") + "\n"
                 + salesRow("2025-07-29", "1", "", "0") + "\n");
 
-        ResponseStatusException error = assertThrows(
-                ResponseStatusException.class,
-                () -> service.retainDateRange(file,
-                        LocalDate.parse("2025-07-28"),
-                        LocalDate.parse("2026-07-26"),
-                        "sales"));
+        service.retainDateRange(file,
+                LocalDate.parse("2025-07-28"),
+                LocalDate.parse("2026-07-26"),
+                "sales");
 
-        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, error.getStatusCode());
-        assertTrue(error.getReason().contains("sales_sum"));
-        assertTrue(error.getReason().contains("3"));
+        try (Reader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8);
+             CSVParser parser = CSVFormat.DEFAULT.builder()
+                     .setHeader()
+                     .setSkipHeaderRecord(true)
+                     .get()
+                     .parse(reader)) {
+            assertEquals("", parser.getRecords().get(1).get("sales_sum"));
+        }
     }
 
     @Test
@@ -107,7 +110,7 @@ class CsvValidationServiceTest {
     }
 
     @Test
-    void treatsMissingTrailingDiscountAsZero() throws Exception {
+    void preservesMissingTrailingDiscount() throws Exception {
         Path file = write("sales.csv", SALES_HEADER + "\n"
                 + salesRow("2025-07-28", "1", "12.5", "")
                         .replaceFirst(",$", "") + "\n");
@@ -123,7 +126,7 @@ class CsvValidationServiceTest {
                      .setSkipHeaderRecord(true)
                      .get()
                      .parse(reader)) {
-            assertEquals("0", parser.iterator().next().get("discount_sum"));
+            assertEquals("", parser.iterator().next().get("discount_sum"));
         }
     }
 

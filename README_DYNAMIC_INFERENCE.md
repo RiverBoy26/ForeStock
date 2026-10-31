@@ -25,6 +25,8 @@ docker compose ps
 
 `stock.csv` требует `date,warehouse_name,article,stock` (также поддерживается старое имя `char_article` для артикула). Даты — `YYYY-MM-DD`. Продажи и остатки должны содержать как минимум 52 недели; фактически ML также требует соответствия фиксированной сетке из snapshot. Дубликаты остатков по дате, складу и артикулу суммируются.
 
+Пустые `sales_sum` и `discount_sum` разрешены и сохраняются как пропуски, а не как нули. Обучающий feature builder исключает пропуски из суммы и числа известных наблюдений. Пустые/нечисловые `quantity` или `stock`, а также буквальные `NaN`/`Infinity` для числовых полей отклоняются.
+
 ## Python API
 
 ML endpoint: `POST http://localhost:8082/v1/predict` с multipart полями `sales`, `stock`. Поддерживаемые варианты: `selected`, `conservative`, `smape_experimental`, `baseline` (это варианты v7.4; они не равны Signature v8.1). Можно указать `cutoff_date=2026-07-26`, `start_week=1`, `end_week=9`, а также `warehouse_name` и `article`. Если `NONTON_API_KEY` задан, добавь заголовок `X-API-Key`.

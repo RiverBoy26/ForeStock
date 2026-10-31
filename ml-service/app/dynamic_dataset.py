@@ -37,7 +37,15 @@ MIN_HISTORY_WEEKS = 52
 
 def _read_csv(path: Path, name: str) -> pd.DataFrame:
     try:
-        frame = pd.read_csv(path, low_memory=False)
+        # Keep identifiers as written (e.g. SKU "00123") and preserve blanks
+        # for numeric fields so the feature builder can distinguish missing
+        # observations from confirmed zeroes.
+        frame = pd.read_csv(
+            path,
+            dtype=str,
+            keep_default_na=False,
+            low_memory=False,
+        )
     except Exception as exc:
         raise ValueError(f"Cannot read {name} as CSV: {exc}") from exc
     if frame.empty:
@@ -52,13 +60,29 @@ def _parse_date(frame: pd.DataFrame, name: str) -> None:
         raise ValueError(f"{name}.date must use YYYY-MM-DD") from exc
 
 
-def _numeric(frame: pd.DataFrame, column: str, name: str, *, nonnegative: bool = False) -> None:
-    values = pd.to_numeric(frame[column], errors="coerce")
-    if not np.isfinite(values).all():
-        raise ValueError(f"{name}.{column} contains a non-numeric or non-finite value")
-    if nonnegative and (values < 0).any():
+def _numeric(
+    frame: pd.DataFrame,
+    column: str,
+    name: str,
+    *,
+    nonnegative: bool = False,
+    allow_missing: bool = False,
+) -> None:
+    raw = frame[column].astype("string").str.strip()
+    missing = raw.isna() | raw.eq("") | raw.str.casefold().isin({"null"})
+    if not allow_missing and missing.any():
+        raise ValueError(f"{name}.{column} contains an empty value")
+    values = pd.to_numeric(raw.mask(missing), errors="coerce")
+    invalid = values.isna() & ~missing
+    if invalid.any():
+        raise ValueError(f"{name}.{column} contains a non-numeric value")
+    numeric = values.to_numpy(dtype=np.float64, na_value=np.nan)
+    present = ~missing.to_numpy()
+    if not np.isfinite(numeric[present]).all():
+        raise ValueError(f"{name}.{column} contains a non-finite value")
+    if nonnegative and (numeric[present] < 0).any():
         raise ValueError(f"{name}.{column} contains a negative value")
-    frame[column] = values.astype("float32")
+    frame[column] = numeric.astype("float32")
 
 
 def _reject_unknown(frame: pd.DataFrame, column: str, allowed: set[str], name: str) -> None:
@@ -84,6 +108,7 @@ def _bucket_tensor(
     mapping = {value: index for index, value in enumerate(buckets[:-1])}
     tags = (
         sales[source]
+        .replace("", pd.NA)
         .astype("string")
         .fillna("__MISSING__")
         .astype(str)
@@ -167,8 +192,8 @@ def build_dynamic_dataset(
     _parse_date(sales, "sales")
     _parse_date(stock, "stock")
     _numeric(sales, "quantity", "sales", nonnegative=True)
-    _numeric(sales, "sales_sum", "sales")
-    _numeric(sales, "discount_sum", "sales")
+    _numeric(sales, "sales_sum", "sales", allow_missing=True)
+    _numeric(sales, "discount_sum", "sales", allow_missing=True)
     _numeric(stock, "stock", "stock")
 
     warehouses = list(map(str, reference.warehouses))
@@ -239,8 +264,16 @@ def build_dynamic_dataset(
 
     def aggregate_known(column: str) -> tuple[np.ndarray, np.ndarray]:
         values = sales[column].to_numpy(dtype=np.float64)
-        total = np.bincount(dense_index, weights=values, minlength=dense_size).astype("float32")
-        count = np.bincount(dense_index, minlength=dense_size).astype("float32")
+        known = np.isfinite(values)
+        total = np.bincount(
+            dense_index[known],
+            weights=values[known],
+            minlength=dense_size,
+        ).astype("float32")
+        count = np.bincount(
+            dense_index[known],
+            minlength=dense_size,
+        ).astype("float32")
         return total.reshape(base.N_WEEKS, n_pairs), count.reshape(base.N_WEEKS, n_pairs)
 
     sales_sum, sales_sum_count = aggregate_known("sales_sum")

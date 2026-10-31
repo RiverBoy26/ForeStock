@@ -26,8 +26,8 @@ def write_inputs(tmp_path: Path, *, warehouse: str, article: str):
             "category_lvl_2": "ignored-reference-encoding-is-used",
             "category_lvl_3": "ignored-reference-encoding-is-used",
             "characteristic": "ignored-reference-encoding-is-used",
-            "sales_sum": 10.0,
-            "discount_sum": 0.0,
+            "sales_sum": ["" if index == 0 else 10.0 for index in range(len(dates))],
+            "discount_sum": ["" if index == 0 else 0.0 for index in range(len(dates))],
         }
     )
     stock = pd.DataFrame(
@@ -69,8 +69,8 @@ class DynamicInferenceTest(unittest.TestCase):
                     "category_lvl_2": "category-2",
                     "category_lvl_3": "category-3",
                     "characteristic": "characteristic",
-                    "sales_sum": 1.0,
-                    "discount_sum": 0.0,
+                    "sales_sum": ["" if index == 0 else 1.0 for index in range(len(dates))],
+                    "discount_sum": ["" if index == 0 else 0.0 for index in range(len(dates))],
                 }
             ).to_csv(sales_path, index=False)
             pd.DataFrame(
@@ -88,6 +88,13 @@ class DynamicInferenceTest(unittest.TestCase):
                 ROOT / "snapshots" / "weekly_history_2026-07-26.npz",
             )
             self.assertEqual(str(dataset.weeks[-1].date()), "2026-07-20")
+            pair = (
+                list(dataset.warehouses).index(reference.warehouses[0])
+                * len(dataset.articles)
+                + list(dataset.articles).index(reference.articles[0])
+            )
+            self.assertEqual(int(dataset.log_sales_count[:, pair].sum()), len(dates) - 1)
+            self.assertEqual(int(dataset.discount_observation[:, pair].sum()), len(dates) - 1)
 
     def test_dynamic_inference_uses_supported_frozen_calendar(self):
         reference = load_dataset(ROOT / "snapshots" / "weekly_history_2026-07-26.npz")

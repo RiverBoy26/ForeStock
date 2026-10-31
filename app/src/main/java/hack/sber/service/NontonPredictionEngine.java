@@ -20,6 +20,7 @@ import java.io.Writer;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.time.Duration;
 import java.util.function.Function;
 
@@ -56,10 +57,11 @@ public class NontonPredictionEngine implements PredictionEngine {
             String variant,
             int startWeek,
             int endWeek,
+            LocalDate cutoffDate,
             Writer output
     ) throws IOException {
         requestPrediction(salesFile, stockFile, article, warehouse, variant,
-                startWeek, endWeek, output);
+                startWeek, endWeek, cutoffDate, output);
     }
 
     @Override
@@ -69,10 +71,11 @@ public class NontonPredictionEngine implements PredictionEngine {
             String variant,
             int startWeek,
             int endWeek,
+            LocalDate cutoffDate,
             Writer output
     ) throws IOException {
         requestPrediction(salesFile, stockFile, null, null, variant,
-                startWeek, endWeek, output);
+                startWeek, endWeek, cutoffDate, output);
     }
 
     private void requestPrediction(
@@ -83,6 +86,7 @@ public class NontonPredictionEngine implements PredictionEngine {
             String variant,
             int startWeek,
             int endWeek,
+            LocalDate cutoffDate,
             Writer output
     ) throws IOException {
         MultiValueMap<String, Object> multipart = new LinkedMultiValueMap<>();
@@ -93,7 +97,8 @@ public class NontonPredictionEngine implements PredictionEngine {
             builder.path("/v1/predict")
                     .queryParam("variant", variant)
                     .queryParam("start_week", startWeek)
-                    .queryParam("end_week", endWeek);
+                    .queryParam("end_week", endWeek)
+                    .queryParam("cutoff_date", cutoffDate);
             if (article != null && !article.isBlank()) {
                 builder.queryParam("article", article);
             }
