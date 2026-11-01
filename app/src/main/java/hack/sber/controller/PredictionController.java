@@ -2,6 +2,7 @@ package hack.sber.controller;
 
 import hack.sber.model.DatasetRecord;
 import hack.sber.service.PredictionEngine;
+import hack.sber.service.ForecastAnalyticsService;
 import hack.sber.service.PredictionService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,13 +21,16 @@ public class PredictionController {
 
     private final PredictionService service;
     private final PredictionEngine engine;
+    private final ForecastAnalyticsService analyticsService;
 
     public PredictionController(
             PredictionService service,
-            PredictionEngine engine
+            PredictionEngine engine,
+            ForecastAnalyticsService analyticsService
     ) {
         this.service = service;
         this.engine = engine;
+        this.analyticsService = analyticsService;
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -56,6 +60,14 @@ public class PredictionController {
                     endWeek,
                     dataset.getCutoffDate(),
                     writer
+            );
+            analyticsService.completeForecast(
+                    dataset,
+                    service.getSalesPath(dataset),
+                    service.getStockPath(dataset),
+                    writer.toString(),
+                    startWeek,
+                    endWeek
             );
             return csvResponse(forecastFilename("forecast", startWeek, endWeek),
                     writer.toString());

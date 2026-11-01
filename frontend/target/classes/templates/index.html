@@ -34,7 +34,8 @@
         }
 
         button,
-        input {
+        input,
+        select {
             font: inherit;
         }
 
@@ -280,6 +281,46 @@
             line-height: 1.6;
         }
 
+        .chart-legend {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .legend-line {
+            width: 22px;
+            height: 3px;
+            border-radius: 2px;
+            background: #8e9aaf;
+        }
+
+        .legend-line.forecast {
+            background: var(--orange);
+        }
+
+        .chart-visual {
+            min-height: 300px;
+            overflow-x: auto;
+            border: 1px solid #303030;
+            border-radius: 14px;
+            background: #141414;
+        }
+
+        .chart-svg {
+            display: block;
+            width: 100%;
+            min-width: 680px;
+            height: auto;
+        }
+
         /* Фильтры */
 
         .top-filters {
@@ -461,6 +502,55 @@
             color: var(--success);
         }
 
+        .forecast-period {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+
+        .forecast-period h3 {
+            margin: 0 0 7px;
+            font-size: 16px;
+        }
+
+        .forecast-period > p {
+            margin: 0 0 16px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .period-fields {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .period-field label {
+            display: block;
+            margin-bottom: 8px;
+            color: #d5d5d5;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .period-field select {
+            width: 100%;
+            min-height: 44px;
+            padding: 10px 12px;
+            color: var(--text);
+            background: var(--surface-light);
+            border: 1px solid #4a4a4a;
+            border-radius: 10px;
+        }
+
+        .period-field select:focus-visible {
+            outline: 2px solid var(--orange);
+            outline-offset: 2px;
+        }
+
         /* Настройки */
 
         .settings-card {
@@ -548,6 +638,10 @@
 
             .upload-card {
                 width: 100%;
+            }
+
+            .period-fields {
+                grid-template-columns: 1fr;
             }
 
             .page-heading h2 {
@@ -676,13 +770,13 @@
             <div class="top-filters">
                 <div class="filter-card">
                     <span>Всего прогнозов</span>
-                    <strong th:text="${totalForecasts != null
+                    <strong id="total-forecasts" th:text="${totalForecasts != null
                         ? totalForecasts : 0}">0</strong>
                 </div>
 
                 <div class="filter-card">
                     <span>Последний расчёт</span>
-                    <strong th:text="${lastCalculation != null
+                    <strong id="last-calculation" th:text="${lastCalculation != null
                         ? lastCalculation : 'Нет данных'}">
                         Нет данных
                     </strong>
@@ -694,7 +788,7 @@
                     <span class="stat-label">
                         Изначально артикулов
                     </span>
-                    <strong class="stat-value accent"
+                    <strong class="stat-value accent" id="article-count"
                             th:text="${articleCount != null
                                 ? articleCount : 0}">0</strong>
                 </div>
@@ -703,7 +797,7 @@
                     <span class="stat-label">
                         Количество складов
                     </span>
-                    <strong class="stat-value"
+                    <strong class="stat-value" id="warehouse-count"
                             th:text="${warehouseCount != null
                                 ? warehouseCount : 0}">0</strong>
                 </div>
@@ -712,7 +806,7 @@
                     <span class="stat-label">
                         Продано единиц за период
                     </span>
-                    <strong class="stat-value"
+                    <strong class="stat-value" id="sold-units"
                             th:text="${soldUnits != null
                                 ? soldUnits : 0}">0</strong>
                 </div>
@@ -721,7 +815,7 @@
                     <span class="stat-label">
                         Товара под конец периода
                     </span>
-                    <strong class="stat-value"
+                    <strong class="stat-value" id="ending-stock"
                             th:text="${endingStock != null
                                 ? endingStock : 0}">0</strong>
                 </div>
@@ -735,9 +829,17 @@
                             Исторические продажи и прогнозируемые значения
                         </p>
                     </div>
+                    <div class="chart-legend" id="chart-legend" hidden>
+                        <span class="legend-item">
+                            <span class="legend-line"></span>История
+                        </span>
+                        <span class="legend-item">
+                            <span class="legend-line forecast"></span>Прогноз
+                        </span>
+                    </div>
                 </div>
 
-                <div class="chart-placeholder">
+                <div class="chart-placeholder" id="demand-chart">
                     <div class="chart-icon" aria-hidden="true">⌁</div>
                     <strong>График пока недоступен</strong>
                     <span>
@@ -840,6 +942,46 @@
 
                 </div>
 
+                <section class="forecast-period" aria-labelledby="forecast-period-title">
+                    <h3 id="forecast-period-title">Период прогноза</h3>
+                    <p>
+                        Выберите непрерывный промежуток внутри доступного горизонта
+                        модели. Одна неделя — семь дней, начиная с понедельника.
+                    </p>
+
+                    <div class="period-fields">
+                        <div class="period-field">
+                            <label for="start-week">Начальная неделя</label>
+                            <select id="start-week" name="start_week">
+                                <option value="1" selected>1-я неделя</option>
+                                <option value="2">2-я неделя</option>
+                                <option value="3">3-я неделя</option>
+                                <option value="4">4-я неделя</option>
+                                <option value="5">5-я неделя</option>
+                                <option value="6">6-я неделя</option>
+                                <option value="7">7-я неделя</option>
+                                <option value="8">8-я неделя</option>
+                                <option value="9">9-я неделя</option>
+                            </select>
+                        </div>
+
+                        <div class="period-field">
+                            <label for="end-week">Конечная неделя</label>
+                            <select id="end-week" name="end_week">
+                                <option value="1">1-я неделя</option>
+                                <option value="2">2-я неделя</option>
+                                <option value="3">3-я неделя</option>
+                                <option value="4">4-я неделя</option>
+                                <option value="5">5-я неделя</option>
+                                <option value="6">6-я неделя</option>
+                                <option value="7">7-я неделя</option>
+                                <option value="8">8-я неделя</option>
+                                <option value="9" selected>9-я неделя</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
                 <button type="submit"
                         class="submit-forecast-btn"
                         id="forecast-submit">
@@ -893,30 +1035,232 @@
     const navButtons = document.querySelectorAll('.nav-btn');
     const screens = document.querySelectorAll('.screen');
 
-    navButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const tabName = button.dataset.tab;
-            const targetScreen =
-                document.getElementById('screen-' + tabName);
+    function activateTab(tabName) {
+        const targetScreen = document.getElementById('screen-' + tabName);
+        const button = Array.from(navButtons)
+            .find(item => item.dataset.tab === tabName);
 
-            if (!targetScreen) {
+        if (!targetScreen || !button) {
+            return;
+        }
+
+        screens.forEach(screen => {
+            screen.classList.remove('active');
+        });
+
+        navButtons.forEach(navButton => {
+            navButton.classList.remove('active');
+            navButton.setAttribute('aria-selected', 'false');
+        });
+
+        targetScreen.classList.add('active');
+        button.classList.add('active');
+        button.setAttribute('aria-selected', 'true');
+    }
+
+    navButtons.forEach(button => {
+        button.addEventListener('click', () => activateTab(button.dataset.tab));
+    });
+
+    const analyticsFields = {
+        totalForecasts: document.getElementById('total-forecasts'),
+        lastCalculation: document.getElementById('last-calculation'),
+        articleCount: document.getElementById('article-count'),
+        warehouseCount: document.getElementById('warehouse-count'),
+        soldUnits: document.getElementById('sold-units'),
+        endingStock: document.getElementById('ending-stock')
+    };
+    const demandChart = document.getElementById('demand-chart');
+    const chartLegend = document.getElementById('chart-legend');
+    const numberFormatter = new Intl.NumberFormat('ru-RU', {
+        maximumFractionDigits: 0
+    });
+    const compactNumberFormatter = new Intl.NumberFormat('ru-RU', {
+        notation: 'compact',
+        maximumFractionDigits: 1
+    });
+
+    function showChartMessage(title, message, icon = '⌁') {
+        demandChart.className = 'chart-placeholder';
+        demandChart.replaceChildren();
+
+        const iconElement = document.createElement('div');
+        iconElement.className = 'chart-icon';
+        iconElement.setAttribute('aria-hidden', 'true');
+        iconElement.textContent = icon;
+
+        const titleElement = document.createElement('strong');
+        titleElement.textContent = title;
+        const messageElement = document.createElement('span');
+        messageElement.textContent = message;
+        demandChart.append(iconElement, titleElement, messageElement);
+        chartLegend.hidden = true;
+    }
+
+    function svgElement(name, attributes = {}) {
+        const element = document.createElementNS(
+            'http://www.w3.org/2000/svg', name);
+        Object.entries(attributes).forEach(([key, value]) => {
+            element.setAttribute(key, String(value));
+        });
+        return element;
+    }
+
+    function renderDemandChart(historical, forecast) {
+        const historyPoints = Array.isArray(historical) ? historical : [];
+        const forecastPoints = Array.isArray(forecast) ? forecast : [];
+        const allPoints = [...historyPoints, ...forecastPoints];
+
+        if (allPoints.length === 0) {
+            showChartMessage('Нет данных для графика',
+                'Последний прогноз не содержит временных рядов.');
+            return;
+        }
+
+        const width = 1000;
+        const height = 330;
+        const padding = {left: 76, right: 26, top: 24, bottom: 54};
+        const plotWidth = width - padding.left - padding.right;
+        const plotHeight = height - padding.top - padding.bottom;
+        const timestamps = allPoints.map(point =>
+            Date.parse(point.date + 'T00:00:00Z'));
+        const minTime = Math.min(...timestamps);
+        const maxTime = Math.max(...timestamps);
+        const maximum = Math.max(1,
+            ...allPoints.map(point => Number(point.value) || 0));
+        const yMaximum = maximum * 1.1;
+        const x = date => {
+            if (maxTime === minTime) {
+                return padding.left + plotWidth / 2;
+            }
+            const time = Date.parse(date + 'T00:00:00Z');
+            return padding.left + (time - minTime) /
+                (maxTime - minTime) * plotWidth;
+        };
+        const y = value => padding.top + plotHeight -
+            (Number(value) || 0) / yMaximum * plotHeight;
+
+        const svg = svgElement('svg', {
+            viewBox: `0 0 ${width} ${height}`,
+            class: 'chart-svg',
+            role: 'img',
+            'aria-label': 'Динамика исторических продаж и прогноза спроса'
+        });
+
+        for (let index = 0; index <= 4; index++) {
+            const value = yMaximum * index / 4;
+            const lineY = y(value);
+            svg.appendChild(svgElement('line', {
+                x1: padding.left,
+                y1: lineY,
+                x2: width - padding.right,
+                y2: lineY,
+                stroke: '#303030',
+                'stroke-width': 1
+            }));
+            const label = svgElement('text', {
+                x: padding.left - 12,
+                y: lineY + 4,
+                fill: '#9ca3af',
+                'font-size': 11,
+                'text-anchor': 'end'
+            });
+            label.textContent = compactNumberFormatter.format(value);
+            svg.appendChild(label);
+        }
+
+        const labelStep = Math.max(1, Math.ceil(allPoints.length / 6));
+        allPoints.forEach((point, index) => {
+            if (index % labelStep !== 0 && index !== allPoints.length - 1) {
                 return;
             }
-
-            screens.forEach(screen => {
-                screen.classList.remove('active');
+            const label = svgElement('text', {
+                x: x(point.date),
+                y: height - 22,
+                fill: '#9ca3af',
+                'font-size': 11,
+                'text-anchor': 'middle'
             });
-
-            navButtons.forEach(navButton => {
-                navButton.classList.remove('active');
-                navButton.setAttribute('aria-selected', 'false');
-            });
-
-            targetScreen.classList.add('active');
-            button.classList.add('active');
-            button.setAttribute('aria-selected', 'true');
+            const [year, month, day] = point.date.split('-');
+            label.textContent = `${day}.${month}`;
+            svg.appendChild(label);
         });
-    });
+
+        function appendSeries(points, color, includeHistoryEnd = false) {
+            let linePoints = points;
+            if (includeHistoryEnd && historyPoints.length > 0) {
+                linePoints = [historyPoints[historyPoints.length - 1], ...points];
+            }
+            if (linePoints.length > 1) {
+                svg.appendChild(svgElement('polyline', {
+                    points: linePoints.map(point =>
+                        `${x(point.date)},${y(point.value)}`).join(' '),
+                    fill: 'none',
+                    stroke: color,
+                    'stroke-width': 3,
+                    'stroke-linecap': 'round',
+                    'stroke-linejoin': 'round'
+                }));
+            }
+            points.forEach(point => {
+                const circle = svgElement('circle', {
+                    cx: x(point.date),
+                    cy: y(point.value),
+                    r: 4,
+                    fill: color,
+                    stroke: '#141414',
+                    'stroke-width': 2
+                });
+                const tooltip = svgElement('title');
+                tooltip.textContent = `${point.date}: ${numberFormatter.format(point.value)}`;
+                circle.appendChild(tooltip);
+                svg.appendChild(circle);
+            });
+        }
+
+        appendSeries(historyPoints, '#8e9aaf');
+        appendSeries(forecastPoints, '#ff7a1a', true);
+
+        demandChart.className = 'chart-visual';
+        demandChart.replaceChildren(svg);
+        chartLegend.hidden = false;
+    }
+
+    async function loadAnalytics() {
+        try {
+            const response = await fetch('/api/analytics/latest', {
+                headers: {'Accept': 'application/json'}
+            });
+            if (response.status === 404) {
+                return;
+            }
+            if (!response.ok) {
+                throw new Error('Сервис аналитики временно недоступен.');
+            }
+
+            const analytics = await response.json();
+            analyticsFields.totalForecasts.textContent =
+                numberFormatter.format(analytics.totalForecasts);
+            analyticsFields.lastCalculation.textContent =
+                new Intl.DateTimeFormat('ru-RU', {
+                    dateStyle: 'short',
+                    timeStyle: 'short'
+                }).format(new Date(analytics.lastCalculation));
+            analyticsFields.articleCount.textContent =
+                numberFormatter.format(analytics.articleCount);
+            analyticsFields.warehouseCount.textContent =
+                numberFormatter.format(analytics.warehouseCount);
+            analyticsFields.soldUnits.textContent =
+                numberFormatter.format(analytics.soldUnits);
+            analyticsFields.endingStock.textContent =
+                numberFormatter.format(analytics.endingStock);
+            renderDemandChart(analytics.historical, analytics.forecast);
+        } catch (error) {
+            showChartMessage('Не удалось загрузить график', error.message, '!');
+        }
+    }
+
+    loadAnalytics();
 
     // Отображение и локальная проверка выбранных файлов.
     function setupFileUpload(inputId, nameId) {
@@ -945,11 +1289,11 @@
                 return;
             }
 
-            const maxSize = 30 * 1024 * 1024;
+            const maxSize = 500 * 1024 * 1024;
 
             if (file.size > maxSize) {
                 nameDiv.textContent =
-                    'Ошибка: максимальный размер файла — 30 МБ';
+                    'Ошибка: максимальный размер файла — 500 МБ';
 
                 input.value = '';
                 return;
@@ -965,6 +1309,8 @@
     const forecastForm = document.getElementById('forecast-form');
     const forecastSubmit = document.getElementById('forecast-submit');
     const forecastStatus = document.getElementById('forecast-status');
+    const startWeekSelect = document.getElementById('start-week');
+    const endWeekSelect = document.getElementById('end-week');
     const forecastInputs = forecastForm
         ? forecastForm.querySelectorAll('input[type="file"]')
         : [];
@@ -972,6 +1318,26 @@
     function setForecastStatus(message, type = '') {
         forecastStatus.textContent = message;
         forecastStatus.className = 'form-status' + (type ? ' ' + type : '');
+    }
+
+    function syncForecastPeriod() {
+        if (!startWeekSelect || !endWeekSelect) {
+            return;
+        }
+
+        const startWeek = Number(startWeekSelect.value);
+        Array.from(endWeekSelect.options).forEach(option => {
+            option.disabled = Number(option.value) < startWeek;
+        });
+
+        if (Number(endWeekSelect.value) < startWeek) {
+            endWeekSelect.value = String(startWeek);
+        }
+    }
+
+    if (startWeekSelect && endWeekSelect) {
+        startWeekSelect.addEventListener('change', syncForecastPeriod);
+        syncForecastPeriod();
     }
 
     function responseFilename(response) {
@@ -992,6 +1358,14 @@
 
             if (!forecastForm.checkValidity()) {
                 forecastForm.reportValidity();
+                return;
+            }
+
+            if (Number(startWeekSelect.value) > Number(endWeekSelect.value)) {
+                setForecastStatus(
+                    'Начальная неделя не может быть позже конечной.',
+                    'error'
+                );
                 return;
             }
 
@@ -1027,12 +1401,15 @@
                 URL.revokeObjectURL(downloadUrl);
 
                 setForecastStatus('Прогноз готов и скачан.', 'success');
+                await loadAnalytics();
+                activateTab('forecasts');
             } catch (error) {
                 let message = error.message || 'Не удалось выполнить прогноз.';
 
                 try {
                     const parsed = JSON.parse(message);
-                    message = parsed.message || parsed.error || message;
+                    message = parsed.detail || parsed.message ||
+                        parsed.error || message;
                 } catch (ignored) {
                     // Ответ уже содержит обычный текст.
                 }

@@ -9,4 +9,9 @@ import java.util.UUID;
 public interface DatasetRepository extends JpaRepository<DatasetRecord, UUID> {
 
     Optional<DatasetRecord> findTopByOrderByCreatedAtDesc();
+
+    Optional<DatasetRecord>
+    findTopByAnalyticsJsonIsNotNullOrderByForecastCreatedAtDesc();
+
+    long countByAnalyticsJsonIsNotNull();
 }

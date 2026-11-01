@@ -50,6 +50,32 @@ public class HelloController {
         return "index";
     }
 
+    @GetMapping("/api/analytics/latest")
+    public void latestAnalytics(HttpServletResponse response) throws IOException {
+        try {
+            backendClient.get()
+                    .uri("/analytics/latest")
+                    .exchange((request, backendResponse) -> {
+                        response.setStatus(backendResponse.getStatusCode().value());
+                        MediaType contentType = backendResponse.getHeaders().getContentType();
+                        if (contentType != null) {
+                            response.setContentType(contentType.toString());
+                        }
+                        backendResponse.getBody().transferTo(response.getOutputStream());
+                        response.flushBuffer();
+                        return null;
+                    });
+        } catch (ResourceAccessException e) {
+            log.error("Backend is unavailable", e);
+            writeError(response, HttpServletResponse.SC_BAD_GATEWAY,
+                    "Бэкенд недоступен. Повторите попытку позже.");
+        } catch (RestClientException e) {
+            log.error("Analytics request failed", e);
+            writeError(response, HttpServletResponse.SC_BAD_GATEWAY,
+                    "Не удалось загрузить аналитику прогноза.");
+        }
+    }
+
     @PostMapping(value = "/predict", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void predict(
             @RequestParam("sales") MultipartFile sales,

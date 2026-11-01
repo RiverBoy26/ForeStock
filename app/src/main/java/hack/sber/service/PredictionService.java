@@ -103,7 +103,13 @@ public class PredictionService {
         repository.delete(dataset);
         Path salesPath = getSalesPath(dataset);
         Path stockPath = getStockPath(dataset);
+        Path forecastPath = dataset.getForecastFilePath() == null
+                ? null
+                : Path.of(dataset.getForecastFilePath());
         try {
+            if (forecastPath != null) {
+                Files.deleteIfExists(forecastPath);
+            }
             Files.deleteIfExists(salesPath);
             Files.deleteIfExists(stockPath);
             Files.deleteIfExists(salesPath.getParent());
